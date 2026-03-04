@@ -1,0 +1,47 @@
+/* Isso muda a fonte de todo o site para ficar mais moderna */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff; /* Um azul bem clarinho de fundo */
+    padding: 20px;
+}
+
+/* Isso deixa o formulário centralizado e com cara de cartão */
+form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px; /* Deixa as pontas arredondadas */
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.1); /* Cria uma sombra suave */
+    max-width: 500px;
+    margin: auto;
+}
+
+/* Deixa os títulos das seções azuis e bonitos */
+legend {
+    font-weight: bold;
+    color: #2c3e50;
+    padding: 0 10px;
+}
+
+/* Dá espaço entre as perguntas */
+fieldset {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* Deixa o botão de enviar grande e verde */
+button {
+    background-color: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+/* Faz o botão mudar de cor quando passamos o mouse */
+button:hover {
+    background-color: #219150;
+}
