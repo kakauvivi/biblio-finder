@@ -1,140 +1,144 @@
-/* Isso muda a fonte de todo o site para ficar mais moderna */
+:root {
+    --preto: #050505;
+    --dourado: #d4af37;
+    --ouro-claro: #fcf6ba;
+    --card-bg: #111111;
+    --radius: 50px;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f8ff; /* Um azul bem clarinho de fundo */
-    padding: 20px;
-}
-
-/* Isso deixa o formulário centralizado e com cara de cartão */
-form {
-    background-color: white;
-    padding: 20px;
-    border-radius: 15px; /* Deixa as pontas arredondadas */
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.1); /* Cria uma sombra suave */
-    max-width: 500px;
-    margin: auto;
-}
-
-/* Deixa os títulos das seções azuis e bonitos */
-legend {
-    font-weight: bold;
-    color: #2c3e50;
-    padding: 0 10px;
-}
-
-/* Dá espaço entre as perguntas */
-fieldset {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-/* Deixa o botão de enviar grande e verde */
-button {
-    background-color: #27ae60;
+    background-color: var(--preto);
     color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
+    font-family: 'Quicksand', sans-serif;
+    margin: 0;
+    transition: all 0.3s;
 }
 
-/* Faz o botão mudar de cor quando passamos o mouse */
-button:hover {
-    background-color: #219150;
+/* Header Arredondado */
+.main-header {
+    text-align: center;
+    padding: 4rem 1rem;
+    background: radial-gradient(circle at top, #1a1a1a 0%, #050505 100%);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 0 0 70px 70px;
 }
-/* --- ESTILOS PADRÃO (Desktop) --- */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    padding: 40px;
+
+.gold-logo-img {
+    max-width: 160px;
+    filter: drop-shadow(0 0 10px var(--dourado));
+    margin-bottom: 10px;
+}
+
+.brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    letter-spacing: 3px;
+    margin: 10px 0;
+}
+
+.gold-text {
+    color: var(--dourado);
+    text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+}
+
+.alma-quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #bbb;
+    font-weight: 400;
+    margin-bottom: 30px;
+}
+
+/* Filtros */
+.genre-nav {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-form {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    max-width: 600px; /* Limita a largura no PC */
-    width: 100%;
-}
-
-fieldset {
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    padding: 15px;
-}
-
-legend {
-    font-weight: bold;
-    color: #333;
-    padding: 0 10px;
-}
-
-input[type="text"], 
-input[type="email"], 
-input[type="password"], 
-input[type="date"], 
-select, 
-textarea {
-    width: 100%; /* Faz os campos ocuparem a largura total do card */
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; /* Garante que o padding não "estoure" a largura */
-}
-
-button {
-    background-color: #28a745;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
+.genre-pill {
+    background: transparent;
+    border: 1.5px solid var(--dourado);
+    color: var(--dourado);
+    padding: 10px 25px;
+    border-radius: var(--radius);
     cursor: pointer;
-    font-size: 16px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.genre-pill.active, .genre-pill:hover {
+    background: var(--dourado);
+    color: black;
+    box-shadow: 0 0 15px var(--dourado);
+}
+
+/* Container de Livros */
+.container {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+}
+
+.book-card {
+    background: var(--card-bg);
+    border-radius: 40px;
+    padding: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    position: relative;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    text-align: center;
+}
+
+.book-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--dourado);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+}
+
+.cover-wrapper {
     width: 100%;
+    height: 350px;
+    border-radius: 30px;
+    overflow: hidden;
+    margin-bottom: 20px;
 }
 
-button:hover {
-    background-color: #218838;
+.cover-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* --- MEDIA QUERIES --- */
-
-/* Tablet (Até 1024px) */
-@media screen and (max-width: 1024px) {
-    body {
-        padding: 20px;
-    }
-    form {
-        max-width: 90%; /* Ocupa mais espaço na tela do tablet */
-    }
+.page-badge {
+    position: absolute;
+    top: 35px;
+    right: 35px;
+    background: var(--dourado);
+    color: black;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.75rem;
+    z-index: 2;
 }
 
-/* Celular (Até 768px) */
-@media screen and (max-width: 768px) {
-    h1 {
-        font-size: 1.5rem;
-        text-align: center;
-    }
+.book-info h3 {
+    font-family: 'Playfair Display', serif;
+    color: var(--dourado);
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
 
-    fieldset {
-        padding: 10px;
-    }
-
-    /* No celular, é melhor que labels e inputs fiquem bem empilhados */
-    label {
-        font-size: 14px;
-    }
-
-    textarea {
-        rows: 3; /* Diminuímos a altura da caixa de texto no celular */
-    }
+.book-info p {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.5;
 }
