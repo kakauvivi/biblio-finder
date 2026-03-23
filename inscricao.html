@@ -120,36 +120,7 @@
 
     <header class="main-header">
         <div class="logo-area">
-            <img src="logo-goldasync function buscarLivros(genero) {
-    const grid = document.getElementById('lista-livros');
-    grid.innerHTML = "<p>Procurando livros na estante mágica...</p>";
-
-    // Faz a busca no Google Books
-    const resposta = await fetch(`https://www.googleapis.com/books/v1/volumes?q=subject:${genero}&maxResults=10&langRestrict=pt`);
-    const dados = await resposta.json();
-
-    grid.innerHTML = ""; // Limpa o texto de carregamento
-
-    dados.items.forEach(livro => {
-        const info = livro.volumeInfo;
-        const capa = info.imageLinks ? info.imageLinks.thumbnail : 'https://via.placeholder.com/150';
-        const resumo = info.description ? info.description.substring(0, 150) + "..." : "Sem resumo disponível.";
-
-        // Cria o card sozinho!
-        grid.innerHTML += `
-            <div class="book-card">
-                <div class="page-badge">${info.pageCount || '???'} págs</div>
-                <div class="cover-wrapper">
-                    <img src="${capa}" alt="Capa">
-                </div>
-                <div class="book-info">
-                    <h3>${info.title}</h3>
-                    <p class="resumo">${resumo}</p>
-                </div>
-            </div>
-        `;
-    });
-}.png" alt="Biblio Finder" class="logo-esfera">
+            <img src="logo-biblio.png" alt="Biblio Finder" class="logo-esfera">
             <h1 class="brand-name">BIBLIO <span class="gold-text">FINDER</span></h1>
         </div>
         
@@ -166,4 +137,3 @@
 
 </body>
 </html>
-
