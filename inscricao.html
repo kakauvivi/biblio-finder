@@ -4,136 +4,35 @@
     <meta charset="UTF-8">
     <title>Biblio Finder | Gold Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    
-    <style>
-        /* --- O ESTILO CHIQUE E REDONDO --- */
-        :root {
-            --preto: #050505;
-            --dourado: #d4af37;
-            --radius-grande: 80px;
-        }
-
-        body {
-            background-color: var(--preto);
-            color: #ffffff;
-            font-family: 'Quicksand', sans-serif; /* Fonte feminina e arredondada */
-            margin: 0;
-            overflow-x: hidden; /* Evita barra de rolagem horizontal */
-        }
-
-        /* O CABEÇALHO (HEADER) - Super Redondo */
-        .main-header {
-            text-align: center;
-            padding: 5rem 1rem 3rem;
-            background: radial-gradient(circle at top, #1a1a1a 0%, #050505 100%);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-            /* O SEGREDO DO "MUITO REDONDO" */
-            border-radius: 0 0 var(--radius-grande) var(--radius-grande);
-        }
-
-        /* --- A ANIMAÇÃO DO LOGO --- */
-        
-        /* 1. Definindo a animação (ele cresce e brilha) */
-        @keyframes carregarLogo {
-            from {
-                opacity: 0;
-                transform: scale(0.5) translateY(-50px);
-                filter: drop-shadow(0 0 0 var(--dourado));
-            }
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-                filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.7));
-            }
-        }
-
-        /* 2. Aplicando a animação na Esfera */
-        .logo-esfera {
-            width: 250px; /* Ele agora está GRANDE */
-            height: auto;
-            border-radius: 50%; /* Essencial para contornar a esfera */
-            
-            /* A MÁGICA DO CARREGAMENTO */
-            animation: carregarLogo 1.5s ease-out forwards; /* 1.5s de duração suave */
-            
-            cursor: pointer;
-            transition: all 0.4s ease; /* Transição suave para o hover */
-        }
-
-        /* Efeito ao passar o mouse: Mais brilho e cresce um tiquinho */
-        .logo-esfera:hover {
-            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.9));
-            transform: scale(1.05);
-        }
-
-        /* --- O RESTANTE DO CABEÇALHO --- */
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            letter-spacing: 4px;
-            margin: 20px 0;
-            color: #ffffff;
-        }
-
-        .gold-text {
-            color: var(--dourado);
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-        }
-
-        .alma-quote {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            color: #cccccc;
-            font-weight: 400;
-            margin-bottom: 3rem;
-            font-size: 1.4rem;
-        }
-
-        /* Botões de Gênero - Redondos e Gordinhos */
-        .genre-nav {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .genre-pill {
-            background: transparent;
-            border: 2px solid var(--dourado);
-            color: var(--dourado);
-            padding: 12px 28px;
-            border-radius: 50px; /* Totalmente redondo nas pontas */
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .genre-pill:hover {
-            background: var(--dourado);
-            color: black;
-            transform: scale(1.05);
-        }
-
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header class="main-header">
         <div class="logo-area">
             <img src="logo-biblio.png" alt="Biblio Finder" class="logo-esfera">
             <h1 class="brand-name">BIBLIO <span class="gold-text">FINDER</span></h1>
         </div>
-        
         <h2 class="alma-quote">Descubra o livro perfeito para a sua alma.</h2>
-        
-        <nav class="genre-nav">
-            <button class="genre-pill">Suspense</button>
-            <button class="genre-pill">Romance</button>
-            <button class="genre-pill">Terror</button>
-            <button class="genre-pill">Fantasia</button>
-            <button class="genre-pill">Ficção Científica</button>
-        </nav>
     </header>
 
+    <nav class="genre-nav">
+        <button class="genre-pill" data-genre="suspense">Suspense</button>
+        <button class="genre-pill" data-genre="horror">Terror</button>
+        <button class="genre-pill" data-genre="history">Histórico</button>
+        <button class="genre-pill" data-genre="science fiction">Ficção Científica</button>
+        <button class="genre-pill" data-genre="fantasy">Fantasia</button>
+        <button class="genre-pill" data-genre="romance">Romance</button>
+    </nav>
+
+    <div class="book-grid" id="book-grid">
+        <!-- Livros serão carregados aqui -->
+    </div>
+
+    <div id="book-viewer-container" class="hidden">
+        <button id="close-viewer">Fechar</button>
+        <iframe id="book-viewer" frameborder="0"></iframe>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
