@@ -83,62 +83,113 @@ body {
 
 .book-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
 }
 
 .book-card {
     background: var(--card-bg);
-    border-radius: 40px;
-    padding: 20px;
-    border: 1px solid rgba(212, 175, 55, 0.1);
-    position: relative;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    border-radius: var(--radius);
+    padding: 15px;
     text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .book-card:hover {
-    transform: translateY(-10px);
-    border-color: var(--dourado);
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
 }
 
 .cover-wrapper {
-    width: 100%;
-    height: 350px;
-    border-radius: 30px;
-    overflow: hidden;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .cover-wrapper img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.page-badge {
-    position: absolute;
-    top: 35px;
-    right: 35px;
-    background: var(--dourado);
-    color: black;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-    font-size: 0.75rem;
-    z-index: 2;
+    height: auto;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .book-info h3 {
-    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
     color: var(--dourado);
-    font-size: 1.4rem;
-    margin-bottom: 10px;
+    margin: 10px 0;
 }
 
 .book-info p {
     font-size: 0.9rem;
-    color: #aaa;
-    line-height: 1.5;
+    color: #bbb;
+    margin: 5px 0;
+}
+
+/* Botão de PDF ou Visualizador */
+.pdf-button, .view-book-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: var(--dourado);
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: var(--radius);
+    transition: 0.3s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.pdf-button:hover, .view-book-button:hover {
+    box-shadow: 0 0 10px var(--dourado);
+}
+
+.no-pdf {
+    margin-top: 10px;
+    color: #bbb;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Visualizador de Livros */
+#book-viewer-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+#book-viewer-container.hidden {
+    display: none;
+}
+
+#book-viewer {
+    width: 80%;
+    height: 80%;
+    border: 1px solid var(--dourado);
+    border-radius: var(--radius);
+}
+
+#close-viewer {
+    background: var(--dourado);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 20px;
+    transition: 0.3s ease;
+}
+
+#close-viewer:hover {
+    box-shadow: 0 0 10px var(--dourado);
 }
