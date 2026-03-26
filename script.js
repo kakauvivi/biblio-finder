@@ -25,165 +25,186 @@ genreButtons.forEach((button) => {
     });
 });
  
-// ── Busca livros no Gutendex (API do Projeto Gutenberg) ──
+// ── Busca livros no Gutendex ──
 async function fetchBooksByGenre(genre) {
     bookGrid.innerHTML = `<p class="loading-msg">🔍 Buscando livros gratuitos...</p>`;
- 
     const topic = GENRE_MAP[genre] || genre;
-    // Busca apenas em inglês para ter mais resultados disponíveis
     const url = `https://gutendex.com/books/?topic=${encodeURIComponent(topic)}&languages=en`;
- 
-    console.log("Buscando:", url);
- 
     try {
         const res = await fetch(url);
-        console.log("Status da resposta:", res.status);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        console.log("Livros recebidos:", data.results?.length);
         displayBooks(data.results);
     } catch (err) {
         console.error("Erro ao buscar livros:", err);
-        bookGrid.innerHTML = `
-            <p style="grid-column:1/-1;text-align:center;color:#bbb;padding:2rem;line-height:1.7">
-                ⚠️ Não foi possível carregar os livros.<br>
-                <small>Verifique sua conexão com a internet e tente novamente.</small>
-            </p>`;
+        bookGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#bbb;padding:2rem;line-height:1.7">
+            ⚠️ Não foi possível carregar os livros.<br>
+            <small>Verifique sua conexão e tente novamente.</small>
+        </p>`;
     }
 }
  
-// ── Imagem de capa padrão (SVG inline, sem dependência externa) ──
+// ── Imagem de capa padrão ──
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='193' viewBox='0 0 128 193'%3E%3Crect width='128' height='193' fill='%23222'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23d4af37' font-size='11' font-family='sans-serif'%3ESem Capa%3C/text%3E%3C/svg%3E";
  
 // ── Exibe os livros no grid ──
 function displayBooks(books) {
     bookGrid.innerHTML = "";
- 
     if (!books || books.length === 0) {
         bookGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:#bbb;padding:2rem;">Nenhum livro encontrado para este gênero.</p>`;
         return;
     }
- 
     books.forEach((book) => {
         const title   = book.title || "Título desconhecido";
         const authors = book.authors?.map(a => a.name).join(", ") || "Autor desconhecido";
         const cover   = book.formats?.["image/jpeg"] || PLACEHOLDER;
- 
-        // Tenta pegar versão HTML do livro (melhor para leitura)
-        const readUrl =
-            book.formats?.["text/html"] ||
-            book.formats?.["text/html; charset=utf-8"] ||
-            book.formats?.["text/html; charset=us-ascii"] ||
-            null;
- 
         const gutenbergPage = `https://www.gutenberg.org/ebooks/${book.id}`;
  
         const card = document.createElement("div");
         card.classList.add("book-card");
         card.setAttribute("role", "listitem");
- 
         card.innerHTML = `
             <div class="cover-wrapper">
-                <img
-                    src="${cover}"
-                    alt="Capa: ${title}"
-                    loading="lazy"
-                    onerror="this.src='${PLACEHOLDER}'"
-                >
+                <img src="${cover}" alt="Capa: ${title}" loading="lazy" onerror="this.src='${PLACEHOLDER}'">
             </div>
             <div class="book-info">
                 <h3>${title}</h3>
                 <p>${authors}</p>
-                ${readUrl
-                    ? `<button class="view-book-button"
-                            data-read="${readUrl}"
-                            data-page="${gutenbergPage}">
-                            📖 Ler Agora
-                       </button>`
-                    : `<a class="view-book-button"
-                            href="${gutenbergPage}"
-                            target="_blank"
-                            rel="noopener">
-                            Ver no Gutenberg
-                       </a>`
-                }
+                <button class="view-book-button"
+                    data-page="${gutenbergPage}"
+                    data-title="${title}"
+                    data-authors="${authors}">
+                    📖 Ler Agora
+                </button>
             </div>
         `;
         bookGrid.appendChild(card);
     });
  
-    // Adiciona eventos nos botões "Ler Agora"
-    document.querySelectorAll(".view-book-button[data-read]").forEach((btn) => {
+    document.querySelectorAll(".view-book-button").forEach((btn) => {
         btn.addEventListener("click", () => {
-            openBookViewer(btn.getAttribute("data-read"), btn.getAttribute("data-page"));
+            openBookViewer(
+                btn.getAttribute("data-page"),
+                btn.getAttribute("data-title"),
+                btn.getAttribute("data-authors")
+            );
         });
     });
 }
  
-// ── Abre o modal e carrega o livro ──
-function openBookViewer(readUrl, gutenbergPage) {
-    // Mostra loading
-    bookViewer.srcdoc = `
-        <div style="display:flex;align-items:center;justify-content:center;height:100%;
-            background:#111;color:#d4af37;font-family:sans-serif;font-size:1.1rem;">
-            ⏳ Carregando livro...
-        </div>`;
- 
+// ── Abre o modal e gera o resumo direto ──
+function openBookViewer(gutenbergPage, title, authors) {
     openExternalButton.href = gutenbergPage;
     openExternalButton.classList.remove("hidden");
     bookViewerContainer.classList.remove("hidden");
     document.body.style.overflow = "hidden";
+    showAISummary(title, authors, gutenbergPage);
+}
  
-    // Baixa o conteúdo HTML do livro e injeta com estilos de leitura
-    fetch(readUrl)
-        .then(res => {
-            if (!res.ok) throw new Error("Falha no fetch");
-            return res.text();
-        })
-        .then(html => {
-            // Adiciona CSS de leitura confortável no dark mode
-            const CSS = `
-                <style>
-                    * { box-sizing: border-box; }
-                    body {
-                        background: #0e0e0e !important;
-                        color: #e8e0d0 !important;
-                        font-family: Georgia, 'Times New Roman', serif !important;
-                        font-size: 1.05rem !important;
-                        line-height: 1.9 !important;
-                        max-width: 700px !important;
-                        margin: 0 auto !important;
-                        padding: 2rem 1.5rem 5rem !important;
-                    }
-                    a { color: #d4af37 !important; }
-                    h1, h2, h3, h4, h5 { color: #d4af37 !important; font-family: Georgia, serif !important; }
-                    img { max-width: 100% !important; height: auto !important; }
-                    pre { white-space: pre-wrap !important; word-break: break-word !important; }
-                    /* Esconde cabeçalho/rodapé do Gutenberg */
-                    #pg-header, #pg-footer, .pgheader, .pgfooter,
-                    .navbar, nav, header { display: none !important; }
-                </style>`;
+// ── Gera resumo com a API do Claude ──
+async function showAISummary(title, authors, gutenbergPage) {
+    bookViewer.srcdoc = loadingHtml("✨ Gerando resumo com IA...");
  
-            // Injeta o CSS antes de fechar o </head>; se não tiver, adiciona no início
-            const styledHtml = html.includes("</head>")
-                ? html.replace("</head>", CSS + "</head>")
-                : CSS + html;
+    try {
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "anthropic-dangerous-direct-browser-access": "true"
+            },
+            body: JSON.stringify({
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 1000,
+                messages: [{
+                    role: "user",
+                    content: `Escreva um resumo envolvente do livro "${title}" de ${authors}.
+Inclua:
+- Uma introdução sobre o livro e sua importância
+- Os principais personagens
+- O enredo geral (sem spoilers do final)
+- Por que vale a pena ler
  
-            bookViewer.srcdoc = styledHtml;
-        })
-        .catch(() => {
-            // Fallback: CORS bloqueou — orienta o usuário a abrir externamente
-            bookViewer.srcdoc = `
-                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
-                    min-height:100vh;font-family:sans-serif;background:#111;color:#d4af37;
-                    text-align:center;padding:2rem;gap:12px;">
-                    <p style="font-size:1.2rem;margin:0;">📚 Livro disponível!</p>
-                    <p style="color:#bbb;font-size:0.95rem;margin:0;">
-                        Este livro não pôde ser carregado diretamente.<br>
-                        Clique em <strong style="color:#d4af37">"Abrir no Gutenberg"</strong> para ler.
-                    </p>
-                </div>`;
+Responda em português, em HTML simples com parágrafos (<p>), títulos (<h2>) e destaques (<strong>).
+Não use markdown, apenas HTML. Não inclua <!DOCTYPE>, <html>, <head> ou <body>.`
+                }]
+            })
         });
+ 
+        const data = await response.json();
+        const summaryHtml = data.content?.[0]?.text || "Resumo não disponível.";
+        bookViewer.srcdoc = summaryPageHtml(title, authors, summaryHtml);
+ 
+    } catch (err) {
+        console.error("Erro ao gerar resumo:", err);
+        bookViewer.srcdoc = summaryPageHtml(
+            title, authors,
+            `<p>Não foi possível gerar o resumo agora. Use o botão <strong>"Abrir no Gutenberg"</strong> acima para ler o livro completo.</p>`
+        );
+    }
+}
+ 
+// ── Template da página de resumo (sem botão de baixo) ──
+function summaryPageHtml(title, authors, bodyHtml) {
+    return `<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: #0e0e0e;
+        color: #e8e0d0;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 1.05rem;
+        line-height: 1.9;
+        padding: 2rem 1.5rem 4rem;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .book-header {
+        border-bottom: 1px solid rgba(212,175,55,0.3);
+        padding-bottom: 1.2rem;
+        margin-bottom: 1.8rem;
+    }
+    .badge {
+        display: inline-block;
+        background: rgba(212,175,55,0.15);
+        color: #d4af37;
+        border: 1px solid rgba(212,175,55,0.4);
+        border-radius: 20px;
+        padding: 3px 12px;
+        font-size: 0.78rem;
+        font-family: sans-serif;
+        letter-spacing: 1px;
+        margin-bottom: 0.8rem;
+    }
+    h1 { color: #d4af37; font-size: 1.5rem; line-height: 1.3; margin-bottom: 0.4rem; }
+    .authors { color: #999; font-style: italic; font-size: 0.95rem; }
+    h2 { color: #d4af37; font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+    p { margin-bottom: 1rem; }
+    strong { color: #f0e0a0; }
+</style>
+</head>
+<body>
+    <div class="book-header">
+        <span class="badge">✨ RESUMO GERADO POR IA</span>
+        <h1>${title}</h1>
+        <p class="authors">${authors}</p>
+    </div>
+    <div class="summary-body">
+        ${bodyHtml}
+    </div>
+</body>
+</html>`;
+}
+ 
+// ── Tela de loading ──
+function loadingHtml(msg) {
+    return `<!DOCTYPE html><html><body style="display:flex;align-items:center;justify-content:center;
+        height:100vh;margin:0;background:#111;color:#d4af37;font-family:sans-serif;font-size:1.1rem;">
+        ${msg}
+    </body></html>`;
 }
  
 // ── Fecha o modal ──
