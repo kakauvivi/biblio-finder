@@ -4,45 +4,818 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#050505">
-    <title>Biblio Finder | Gold Edition</title>
+    <title>Biblio Finder | Criar Perfil</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --preto: #050505;
+            --dourado: #d4af37;
+            --ouro-claro: #fcf6ba;
+            --card-bg: #111111;
+            --radius: 50px;
+            --input-bg: #1a1a1a;
+            --borda: rgba(212, 175, 55, 0.3);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background-color: var(--preto);
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* ── Header ── */
+        .main-header {
+            text-align: center;
+            padding: 2.5rem 1rem 2rem;
+            background: radial-gradient(circle at top, #1a1a1a 0%, #050505 100%);
+            border-bottom: 1px solid var(--borda);
+            border-radius: 0 0 60px 60px;
+        }
+
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-esfera {
+            width: 120px;
+            height: auto;
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.4rem, 5vw, 2rem);
+            letter-spacing: 3px;
+            margin: 8px 0 4px;
+        }
+
+        .gold-text { color: var(--dourado); text-shadow: 0 0 15px rgba(212,175,55,0.5); }
+
+        .page-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            color: #bbb;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            margin: 0.3rem 0 0;
+        }
+
+        /* ── Layout principal ── */
+        main {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 2rem 1.2rem 4rem;
+        }
+
+        /* ── Stepper ── */
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 2.5rem;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+            flex: 1;
+            max-width: 80px;
+        }
+
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid var(--borda);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #666;
+            background: var(--card-bg);
+            transition: border-color 0.3s, color 0.3s, background 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-item.active .step-circle,
+        .step-item.done .step-circle {
+            border-color: var(--dourado);
+            color: var(--preto);
+            background: var(--dourado);
+        }
+
+        .step-label {
+            font-size: 0.7rem;
+            color: #555;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .step-item.active .step-label { color: var(--dourado); }
+
+        .step-line {
+            flex: 1;
+            height: 2px;
+            background: var(--borda);
+            margin-top: -22px;
+        }
+
+        .step-line.done { background: var(--dourado); }
+
+        /* ── Cards de seção ── */
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--borda);
+            border-radius: 24px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--dourado);
+            font-size: 1.1rem;
+            margin: 0 0 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        /* ── Inputs ── */
+        label.field-label {
+            display: block;
+            font-size: 0.85rem;
+            color: #aaa;
+            margin-bottom: 6px;
+            margin-top: 16px;
+        }
+
+        label.field-label:first-child { margin-top: 0; }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select,
+        textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--borda);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.95rem;
+            padding: 12px 16px;
+            outline: none;
+            transition: border-color 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--dourado);
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+            cursor: pointer;
+        }
+
+        select option { background: #1a1a1a; color: white; }
+
+        textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+        /* ── Chips de seleção múltipla ── */
+        .chips-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .chip {
+            background: transparent;
+            border: 1.5px solid var(--borda);
+            color: #aaa;
+            padding: 7px 16px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 0.82rem;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .chip.selected {
+            background: rgba(212,175,55,0.15);
+            border-color: var(--dourado);
+            color: var(--dourado);
+        }
+
+        /* ── Radio / Toggle ── */
+        .toggle-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-option {
+            flex: 1;
+            min-width: 120px;
+            background: var(--input-bg);
+            border: 1.5px solid var(--borda);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #888;
+            transition: all 0.2s;
+            touch-action: manipulation;
+        }
+
+        .toggle-option.selected {
+            border-color: var(--dourado);
+            background: rgba(212,175,55,0.1);
+            color: var(--dourado);
+        }
+
+        .toggle-icon { display: block; font-size: 1.2rem; margin-bottom: 4px; }
+
+        /* ── Aviso opcional ── */
+        .optional-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            color: #666;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+            vertical-align: middle;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        /* ── Botões de navegação ── */
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1.5px solid var(--borda);
+            color: #aaa;
+            padding: 12px 28px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { border-color: #aaa; color: white; }
+
+        .btn-next, .btn-submit {
+            background: var(--dourado);
+            border: none;
+            color: #000;
+            padding: 12px 32px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: box-shadow 0.2s;
+            touch-action: manipulation;
+        }
+
+        .btn-next:hover, .btn-submit:hover {
+            box-shadow: 0 0 18px rgba(212,175,55,0.5);
+        }
+
+        /* ── Erro de validação ── */
+        .field-error {
+            color: #e07070;
+            font-size: 0.78rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .field-error.visible { display: block; }
+
+        /* ── Link para login ── */
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.88rem;
+            color: #666;
+        }
+
+        .login-link a {
+            color: var(--dourado);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ── Passos (controle de exibição) ── */
+        .form-step { display: none; }
+        .form-step.active { display: block; }
+
+        /* ── Tela de sucesso ── */
+        #success-screen {
+            display: none;
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        #success-screen.active { display: block; }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(212,175,55,0.12);
+            border: 2px solid var(--dourado);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .success-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: var(--dourado);
+            margin-bottom: 0.5rem;
+        }
+
+        .success-sub {
+            color: #aaa;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-goto {
+            display: inline-block;
+            background: var(--dourado);
+            color: #000;
+            padding: 14px 40px;
+            border-radius: var(--radius);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: box-shadow 0.2s;
+        }
+
+        .btn-goto:hover { box-shadow: 0 0 20px rgba(212,175,55,0.5); }
+
+        /* ── Barra de progresso ── */
+        .progress-bar-wrap {
+            width: 100%;
+            height: 3px;
+            background: rgba(212,175,55,0.1);
+            border-radius: 2px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--dourado);
+            border-radius: 2px;
+            transition: width 0.4s ease;
+        }
+
+        /* ── Força de senha ── */
+        .password-strength {
+            margin-top: 8px;
+            display: flex;
+            gap: 4px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+
+        .strength-bar.weak   { background: #e07070; }
+        .strength-bar.medium { background: #e0b070; }
+        .strength-bar.strong { background: #70c070; }
+
+        .strength-label {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 480px) {
+            main { padding: 1.5rem 1rem 3rem; }
+            .section-card { padding: 1.3rem; }
+            .nav-buttons { flex-wrap: wrap; }
+            .btn-back, .btn-next, .btn-submit { flex: 1; text-align: center; }
+        }
+    </style>
 </head>
 <body>
-    <header class="main-header">
-        <div class="logo-area">
-            <img src="logo-gold.png" alt="Biblio Finder" class="logo-esfera">
-            <h1 class="brand-name">BIBLIO <span class="gold-text">FINDER</span></h1>
-        </div>
-        <h2 class="alma-quote">Descubra o livro perfeito para a sua alma.</h2>
-    </header>
- 
-    <nav class="genre-nav" aria-label="Filtrar por gênero">
-        <button class="genre-pill" data-genre="suspense">Suspense</button>
-        <button class="genre-pill" data-genre="horror">Terror</button>
-        <button class="genre-pill" data-genre="history">Histórico</button>
-        <button class="genre-pill" data-genre="science fiction">Ficção Científica</button>
-        <button class="genre-pill" data-genre="fantasy">Fantasia</button>
-        <button class="genre-pill" data-genre="romance">Romance</button>
-    </nav>
- 
-    <main>
-        <div class="book-grid" id="book-grid" role="list" aria-live="polite">
-            <!-- Livros serão carregados aqui -->
-        </div>
-    </main>
- 
-    <!-- Modal de leitura -->
-    <div id="book-viewer-container" class="hidden" role="dialog" aria-modal="true" aria-label="Visualizador de livro">
-        <div class="viewer-controls">
-            <button id="close-viewer" aria-label="Fechar visualizador">✕ Fechar</button>
-            <a id="open-external" href="#" target="_blank" rel="noopener noreferrer" class="external-link hidden">
-                🌐 Abrir no Gutenberg
-            </a>
-        </div>
-        <iframe id="book-viewer" frameborder="0" title="Visualizador de livro"></iframe>
+
+<header class="main-header">
+    <div class="logo-area">
+        <h1 class="brand-name">BIBLIO <span class="gold-text">FINDER</span></h1>
+        <p class="page-subtitle">Crie seu perfil literário</p>
     </div>
- 
-    <script src="script.js"></script>
+</header>
+
+<main>
+    <!-- Stepper -->
+    <div class="stepper" id="stepper">
+        <div class="step-item active" id="step-dot-1">
+            <div class="step-circle">1</div>
+            <span class="step-label">Conta</span>
+        </div>
+        <div class="step-line" id="line-1-2"></div>
+        <div class="step-item" id="step-dot-2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Perfil</span>
+        </div>
+        <div class="step-line" id="line-2-3"></div>
+        <div class="step-item" id="step-dot-3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Preferências</span>
+        </div>
+    </div>
+
+    <!-- Barra de progresso -->
+    <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar" style="width: 33%"></div>
+    </div>
+
+    <!-- ── PASSO 1: Dados da conta ── -->
+    <div class="form-step active" id="step-1">
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="section-icon">✉</span>
+                Dados de acesso
+            </h2>
+
+            <label class="field-label" for="email">E-mail</label>
+            <input type="email" id="email" placeholder="seu@email.com" autocomplete="email">
+            <span class="field-error" id="email-error">Insira um e-mail válido.</span>
+
+            <label class="field-label" for="senha">Senha</label>
+            <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+            <div class="password-strength">
+                <div class="strength-bar" id="sb1"></div>
+                <div class="strength-bar" id="sb2"></div>
+                <div class="strength-bar" id="sb3"></div>
+            </div>
+            <p class="strength-label" id="strength-label"></p>
+            <span class="field-error" id="senha-error">A senha deve ter ao menos 6 caracteres.</span>
+
+            <label class="field-label" for="senha-conf">Confirmar senha</label>
+            <input type="password" id="senha-conf" placeholder="Repita a senha" autocomplete="new-password">
+            <span class="field-error" id="senha-conf-error">As senhas não coincidem.</span>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn-next" onclick="irPara(2)">Próximo →</button>
+        </div>
+
+        <p class="login-link">Já tem conta? <a href="index.html">Entrar</a></p>
+    </div>
+
+    <!-- ── PASSO 2: Perfil pessoal ── -->
+    <div class="form-step" id="step-2">
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="section-icon">☺</span>
+                Sobre você
+            </h2>
+
+            <label class="field-label" for="nome">Nome ou apelido</label>
+            <input type="text" id="nome" placeholder="Como prefere ser chamado(a)?" autocomplete="nickname">
+            <span class="field-error" id="nome-error">Por favor, informe seu nome.</span>
+
+            <label class="field-label" for="faixa-etaria">Faixa etária <span class="optional-badge">opcional</span></label>
+            <select id="faixa-etaria">
+                <option value="" disabled selected>Selecione...</option>
+                <option value="under18">Menos de 18 anos</option>
+                <option value="18-24">18 – 24 anos</option>
+                <option value="25-34">25 – 34 anos</option>
+                <option value="35-44">35 – 44 anos</option>
+                <option value="45+">45 anos ou mais</option>
+            </select>
+
+            <label class="field-label">Frequência de leitura <span class="optional-badge">opcional</span></label>
+            <div class="toggle-group" id="frequencia">
+                <div class="toggle-option" data-val="raramente" onclick="toggleOption(this, 'frequencia')">
+                    <span class="toggle-icon">📚</span>Raramente
+                </div>
+                <div class="toggle-option" data-val="mensalmente" onclick="toggleOption(this, 'frequencia')">
+                    <span class="toggle-icon">📖</span>Mensalmente
+                </div>
+                <div class="toggle-option" data-val="semanalmente" onclick="toggleOption(this, 'frequencia')">
+                    <span class="toggle-icon">⚡</span>Semanalmente
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="irPara(1)">← Voltar</button>
+            <button class="btn-next" onclick="irPara(3)">Próximo →</button>
+        </div>
+    </div>
+
+    <!-- ── PASSO 3: Questionário Literário ── -->
+    <div class="form-step" id="step-3">
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="section-icon">★</span>
+                Gêneros favoritos <span class="optional-badge" style="font-family:'Quicksand';font-style:normal;font-size:0.7rem;color:#555;background:rgba(255,255,255,0.04);border-radius:20px;padding:2px 8px;margin-left:4px">selecione ao menos 1</span>
+            </h2>
+
+            <div class="chips-group" id="generos">
+                <div class="chip" data-val="fantasy" onclick="toggleChip(this, 'generos')">Fantasia</div>
+                <div class="chip" data-val="romance" onclick="toggleChip(this, 'generos')">Romance</div>
+                <div class="chip" data-val="suspense" onclick="toggleChip(this, 'generos')">Suspense</div>
+                <div class="chip" data-val="horror" onclick="toggleChip(this, 'generos')">Terror</div>
+                <div class="chip" data-val="science fiction" onclick="toggleChip(this, 'generos')">Ficção Científica</div>
+                <div class="chip" data-val="history" onclick="toggleChip(this, 'generos')">Histórico</div>
+                <div class="chip" data-val="adventure" onclick="toggleChip(this, 'generos')">Aventura</div>
+                <div class="chip" data-val="biography" onclick="toggleChip(this, 'generos')">Biografia</div>
+                <div class="chip" data-val="self-help" onclick="toggleChip(this, 'generos')">Autoajuda</div>
+            </div>
+            <span class="field-error" id="generos-error">Selecione ao menos um gênero.</span>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="section-icon">⊘</span>
+                Temas a evitar <span class="optional-badge">opcional</span>
+            </h2>
+            <div class="chips-group" id="evitar">
+                <div class="chip" data-val="violencia" onclick="toggleChip(this, 'evitar')">Violência extrema</div>
+                <div class="chip" data-val="guerra" onclick="toggleChip(this, 'evitar')">Guerra</div>
+                <div class="chip" data-val="abuso" onclick="toggleChip(this, 'evitar')">Abuso</div>
+                <div class="chip" data-val="religiao" onclick="toggleChip(this, 'evitar')">Religião</div>
+                <div class="chip" data-val="politica" onclick="toggleChip(this, 'evitar')">Política</div>
+                <div class="chip" data-val="morte" onclick="toggleChip(this, 'evitar')">Morte de animais</div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <h2 class="section-title">
+                <span class="section-icon">◑</span>
+                Preferências de leitura <span class="optional-badge">opcional</span>
+            </h2>
+
+            <label class="field-label">Tipo de final preferido</label>
+            <div class="toggle-group" id="final">
+                <div class="toggle-option" data-val="feliz" onclick="toggleOption(this, 'final')">
+                    <span class="toggle-icon">😊</span>Feliz
+                </div>
+                <div class="toggle-option" data-val="aberto" onclick="toggleOption(this, 'final')">
+                    <span class="toggle-icon">🌀</span>Aberto
+                </div>
+                <div class="toggle-option" data-val="triste" onclick="toggleOption(this, 'final')">
+                    <span class="toggle-icon">😢</span>Triste
+                </div>
+                <div class="toggle-option" data-val="qualquer" onclick="toggleOption(this, 'final')">
+                    <span class="toggle-icon">✨</span>Qualquer
+                </div>
+            </div>
+
+            <label class="field-label" style="margin-top:20px">Humor da história</label>
+            <div class="toggle-group" id="humor">
+                <div class="toggle-option" data-val="leve" onclick="toggleOption(this, 'humor')">
+                    <span class="toggle-icon">☀</span>Leve
+                </div>
+                <div class="toggle-option" data-val="serio" onclick="toggleOption(this, 'humor')">
+                    <span class="toggle-icon">🎭</span>Sério
+                </div>
+                <div class="toggle-option" data-val="sombrio" onclick="toggleOption(this, 'humor')">
+                    <span class="toggle-icon">🌑</span>Sombrio
+                </div>
+            </div>
+
+            <label class="field-label" for="autores" style="margin-top:20px">Autores favoritos <span class="optional-badge">opcional</span></label>
+            <textarea id="autores" placeholder="Ex: Agatha Christie, J.K. Rowling, Gabriel García Márquez..."></textarea>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn-back" onclick="irPara(2)">← Voltar</button>
+            <button class="btn-submit" onclick="finalizar()">Criar meu perfil ✓</button>
+        </div>
+    </div>
+
+    <!-- ── TELA DE SUCESSO ── -->
+    <div id="success-screen">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">Perfil criado!</h2>
+        <p class="success-sub">
+            Suas preferências foram salvas.<br>
+            Agora vamos encontrar os livros perfeitos para você.
+        </p>
+        <a href="inscricao.html" class="btn-goto">Explorar livros →</a>
+    </div>
+</main>
+
+<script>
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    // Mapa de seleções
+    const selections = {
+        frequencia: null,
+        final: null,
+        humor: null,
+    };
+
+    const chipSelections = {
+        generos: new Set(),
+        evitar: new Set(),
+    };
+
+    // ── Navegação entre passos ──
+    function irPara(step) {
+        if (!validarPasso(currentStep)) return;
+        document.getElementById(`step-${currentStep}`).classList.remove('active');
+        currentStep = step;
+        document.getElementById(`step-${currentStep}`).classList.add('active');
+        atualizarStepper();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function atualizarStepper() {
+        const progress = (currentStep / totalSteps) * 100;
+        document.getElementById('progress-bar').style.width = progress + '%';
+
+        for (let i = 1; i <= totalSteps; i++) {
+            const dot = document.getElementById(`step-dot-${i}`);
+            dot.classList.remove('active', 'done');
+            if (i < currentStep) dot.classList.add('done');
+            else if (i === currentStep) dot.classList.add('active');
+        }
+
+        for (let i = 1; i < totalSteps; i++) {
+            const line = document.getElementById(`line-${i}-${i+1}`);
+            if (line) line.classList.toggle('done', i < currentStep);
+        }
+    }
+
+    // ── Validação por passo ──
+    function validarPasso(step) {
+        let ok = true;
+
+        if (step === 1) {
+            const email = document.getElementById('email').value.trim();
+            const senha = document.getElementById('senha').value;
+            const conf  = document.getElementById('senha-conf').value;
+
+            const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            mostrarErro('email-error', !emailOk);
+            if (!emailOk) ok = false;
+
+            const senhaOk = senha.length >= 6;
+            mostrarErro('senha-error', !senhaOk);
+            if (!senhaOk) ok = false;
+
+            const confOk = senha === conf && conf !== '';
+            mostrarErro('senha-conf-error', !confOk);
+            if (!confOk) ok = false;
+        }
+
+        if (step === 2) {
+            const nome = document.getElementById('nome').value.trim();
+            const nomeOk = nome.length > 0;
+            mostrarErro('nome-error', !nomeOk);
+            if (!nomeOk) ok = false;
+        }
+
+        if (step === 3) {
+            const genOk = chipSelections.generos.size > 0;
+            mostrarErro('generos-error', !genOk);
+            if (!genOk) ok = false;
+        }
+
+        return ok;
+    }
+
+    function mostrarErro(id, show) {
+        document.getElementById(id).classList.toggle('visible', show);
+    }
+
+    // ── Chips ──
+    function toggleChip(el, grupo) {
+        const val = el.getAttribute('data-val');
+        if (el.classList.contains('selected')) {
+            el.classList.remove('selected');
+            chipSelections[grupo].delete(val);
+        } else {
+            el.classList.add('selected');
+            chipSelections[grupo].add(val);
+        }
+    }
+
+    // ── Toggle options (radio) ──
+    function toggleOption(el, grupo) {
+        document.querySelectorAll(`#${grupo} .toggle-option`).forEach(o => o.classList.remove('selected'));
+        el.classList.add('selected');
+        selections[grupo] = el.getAttribute('data-val');
+    }
+
+    // ── Força de senha ──
+    document.getElementById('senha').addEventListener('input', function () {
+        const v = this.value;
+        const bars = [document.getElementById('sb1'), document.getElementById('sb2'), document.getElementById('sb3')];
+        const label = document.getElementById('strength-label');
+        bars.forEach(b => b.className = 'strength-bar');
+
+        if (v.length === 0) { label.textContent = ''; return; }
+
+        let score = 0;
+        if (v.length >= 6) score++;
+        if (v.length >= 10) score++;
+        if (/[A-Z]/.test(v) && /[0-9]/.test(v)) score++;
+
+        const levels = [
+            { cls: 'weak',   txt: 'Fraca',  n: 1 },
+            { cls: 'medium', txt: 'Média',  n: 2 },
+            { cls: 'strong', txt: 'Forte',  n: 3 },
+        ];
+
+        const lvl = levels[Math.max(0, score - 1)];
+        for (let i = 0; i < lvl.n; i++) bars[i].className = `strength-bar ${lvl.cls}`;
+        label.textContent = lvl.txt;
+    });
+
+    // ── Finalizar ──
+    function finalizar() {
+        if (!validarPasso(3)) return;
+
+        // Salvar perfil no localStorage
+        const perfil = {
+            email: document.getElementById('email').value.trim(),
+            nome: document.getElementById('nome').value.trim(),
+            faixaEtaria: document.getElementById('faixa-etaria').value,
+            frequencia: selections.frequencia,
+            generosFavoritos: [...chipSelections.generos],
+            temasEvitar: [...chipSelections.evitar],
+            finalPreferido: selections.final,
+            humorPreferido: selections.humor,
+            autoresFavoritos: document.getElementById('autores').value.trim(),
+            favoritos: [],
+            historico: [],
+        };
+        localStorage.setItem('bibliofinder_perfil', JSON.stringify(perfil));
+
+        // Exibir tela de sucesso
+        document.getElementById(`step-${currentStep}`).classList.remove('active');
+        document.getElementById('stepper').style.display = 'none';
+        document.querySelector('.progress-bar-wrap').style.display = 'none';
+        document.getElementById('success-screen').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
 </body>
 </html>
