@@ -901,7 +901,7 @@
     });
 
     // ── Finalizar ──
-    async function finalizar() {
+    function finalizar() {
         if (!validarPasso(3)) return;
 
         // Salvar perfil no localStorage
@@ -920,6 +920,13 @@
         };
         localStorage.setItem('bibliofinder_perfil', JSON.stringify(perfil));
 
+        // Salvar na lista de contas para login futuro
+        const contas = JSON.parse(localStorage.getItem('bibliofinder_contas') || '[]');
+        if(!contas.find(c => c.email === perfil.email)) {
+            contas.push({ email: perfil.email, senha: document.getElementById('senha').value, nome: perfil.nome, role: 'leitor' });
+            localStorage.setItem('bibliofinder_contas', JSON.stringify(contas));
+        }
+
         // Esconder formulário e stepper
         document.getElementById(`step-${currentStep}`).classList.remove('active');
         document.getElementById('stepper').style.display = 'none';
@@ -931,7 +938,7 @@
         document.getElementById('recom-loading').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        await gerarRecomendacoes(perfil);
+        gerarRecomendacoes(perfil);
     }
 
     // Emojis por gênero para as capas placeholder
@@ -941,74 +948,98 @@
         biography: '📜', 'self-help': '🌱',
     };
 
-    async function gerarRecomendacoes(perfil) {
-        const generos = perfil.generosFavoritos.join(', ');
-        const evitar  = perfil.temasEvitar.length ? perfil.temasEvitar.join(', ') : 'nenhum';
-        const final   = perfil.finalPreferido || 'qualquer';
-        const humor   = perfil.humorPreferido || 'qualquer';
-        const autores = perfil.autoresFavoritos || 'não informado';
+    // ── Banco de livros fictícios por gênero ──
+    const BANCO = {
+        fantasy: [
+            { titulo: "A Coroa de Cinzas", autor: "Lirien Valdos", descricao: "Em um reino onde a magia é punida com morte, uma jovem descobre que seu sangue pode destruir — ou salvar — tudo o que existe. Uma jornada de escolhas impossíveis e alianças traiçoeiras.", tags: ["épico", "magia proibida", "realeza"] },
+            { titulo: "O Último Druida", autor: "Maren Solveig", descricao: "Quando as florestas começam a apagar a memória dos homens, apenas um druida exilado conhece o caminho de volta. Mas o preço da cura pode ser sua própria existência.", tags: ["floresta", "memória", "sacrifício"] },
+            { titulo: "Filhos da Lua Partida", autor: "Caelum Bright", descricao: "Dois irmãos separados ao nascer crescem em lados opostos de uma guerra mágica. O reencontro deles pode unir o mundo — ou destruí-lo de vez.", tags: ["irmãos", "guerra mágica", "destino"] },
+            { titulo: "A Biblioteca Esquecida", autor: "Isara Venn", descricao: "No subsolo de uma cidade submarina existe uma biblioteca cujos livros reescrevem a realidade. Quando uma leitora encontra um volume sobre si mesma, nada é mais certo.", tags: ["livros", "realidade", "mistério"] },
+        ],
+        romance: [
+            { titulo: "Entre Cartas e Marés", autor: "Sofia Alentejo", descricao: "Dois desconhecidos trocam cartas anônimas por um ano sem saber que são vizinhos de parede. Quando a verdade vem à tona, o amor já construído enfrenta sua maior prova.", tags: ["cartas", "vizinhos", "segredo"] },
+            { titulo: "O Verão que Não Acabou", autor: "Lucas Ferreira", descricao: "Uma fotógrafa e um pescador dividem uma ilha por um mês enquanto fogem de suas vidas. O que começa como fuga se transforma no lar que nenhum dos dois sabia que procurava.", tags: ["ilha", "fotografia", "recomeço"] },
+            { titulo: "Quando o Inverno Passa", autor: "Ana Dolores Ruiz", descricao: "Ela prometeu nunca mais amar depois do acidente. Ele prometeu nunca ficar. Uma pequena cidade nevada, uma tempestade de três dias e uma promessa que nenhum dos dois vai conseguir manter.", tags: ["inverno", "promessas", "segunda chance"] },
+            { titulo: "A Livraria do Fim do Mundo", autor: "Helena Sá", descricao: "A última livraria física da cidade é herdada por uma arquiteta que só lê projetos. O livreiro que a ajuda a catalogar o acervo traz consigo histórias que mudam tudo.", tags: ["livros", "herança", "descoberta"] },
+        ],
+        suspense: [
+            { titulo: "A Testemunha Invisível", autor: "Marco Delvecchio", descricao: "Uma mulher amnésica acorda convicta de ter visto um crime. O problema: a polícia não acredita nela, e o criminoso sabe exatamente quem ela é.", tags: ["amnésia", "crime", "perseguição"] },
+            { titulo: "Três Andares Abaixo", autor: "Petra Kolm", descricao: "Em um prédio antigo de Lisboa, três moradores desaparecem no mesmo dia. A única pista está nos rascunhos deixados por um inquilino misterioso que ninguém viu chegar.", tags: ["Lisboa", "desaparecimento", "rascunhos"] },
+            { titulo: "O Código do Silêncio", autor: "Rafael Nieves", descricao: "Uma jornalista recebe um áudio com confissões de um crime imprescritível. Quanto mais investiga, mais percebe que a história apaga quem a descobre.", tags: ["jornalismo", "conspiração", "áudio"] },
+            { titulo: "Antes do Amanhecer", autor: "Sienna Walsh", descricao: "Todo crime perfeito tem uma falha. Um detetive aposentado recebe uma foto tirada no exato momento de um assassinato — e ele mesmo está na imagem, sem se lembrar de nada.", tags: ["detetive", "fotografia", "memória"] },
+        ],
+        horror: [
+            { titulo: "A Casa que Respira", autor: "Viktor Draal", descricao: "Uma família se muda para uma propriedade isolada que parece se adaptar ao medo de cada um. As paredes não são de concreto — e o que vive dentro delas tem fome.", tags: ["casa assombrada", "família", "psicológico"] },
+            { titulo: "O Colecionador de Sorrisos", autor: "Mira Holloway", descricao: "Numa cidade litorânea, turistas desaparecem deixando apenas um sorriso pintado na areia. Quando a investigadora chega, a cidade sorri para ela também.", tags: ["investigação", "rituais", "litoral"] },
+            { titulo: "Olhos nos Telhados", autor: "Daan Verschoor", descricao: "Uma insônia crônica faz uma mulher ver coisas na escuridão. Mas quando sua terapeuta começa a temer ela também, fica claro que talvez não seja apenas imaginação.", tags: ["insônia", "psicológico", "terror urbano"] },
+        ],
+        'science fiction': [
+            { titulo: "Memória Residual", autor: "Anya Korvitch", descricao: "Em 2187, memórias podem ser vendidas, compradas e implantadas. Uma engenheira descobre uma memória proibida em seu próprio córtex — de um futuro que ainda não aconteceu.", tags: ["memória", "futuro", "tecnologia"] },
+            { titulo: "O Último Sinal", autor: "Cassian Roe", descricao: "A única sonda interestelar da humanidade envia um sinal inesperado após 40 anos de silêncio. O que ela encontrou não veio de uma estrela — veio de dentro do sistema solar.", tags: ["espaço", "primeiro contato", "mistério"] },
+            { titulo: "Colônia Zero", autor: "Lexa Fontaine", descricao: "A primeira colônia em Marte perde contato com a Terra no dia da inauguração. A governante local descobre que o isolamento foi planejado — e que a colônia é um experimento.", tags: ["Marte", "isolamento", "conspiração"] },
+            { titulo: "A Última Linguagem", autor: "Tomás Grei", descricao: "Uma linguista é contratada para decifrar uma língua alienígena. Cada palavra aprendida apaga uma memória sua — e ela está a poucas palavras de compreender tudo.", tags: ["linguagem", "alienígenas", "identidade"] },
+        ],
+        history: [
+            { titulo: "A Espia de Versalhes", autor: "Claudine Moreau", descricao: "Nas vésperas da Revolução Francesa, uma camareira da rainha descobre uma conspiração que pode mudar o curso da história — se ela sobreviver para contá-la.", tags: ["França", "revolução", "espionagem"] },
+            { titulo: "O Cartógrafo de Impérios", autor: "Adebayo Nkosi", descricao: "Em 1500, um cartógrafo árabe e uma navegadora portuguesa disputam o mesmo mapa que pode redefinir as fronteiras do mundo conhecido — e do desconhecido.", tags: ["navegação", "mapas", "séc. XVI"] },
+            { titulo: "Cinzas de Ouro", autor: "Ingrid Hägg", descricao: "Durante a Segunda Guerra, uma curadora de arte em Oslo esconde obras proibidas nos subterrâneos da cidade. Cada quadro guardado é uma vida apostada.", tags: ["guerra", "arte", "resistência"] },
+        ],
+        adventure: [
+            { titulo: "A Rota dos Perdidos", autor: "Dante Alvarez", descricao: "Um guia e uma geóloga partem em busca de uma cidade lendária na Amazônia. O que encontram no caminho não está em nenhum mapa — e não quer ser encontrado.", tags: ["Amazônia", "exploração", "lenda"] },
+            { titulo: "Oceano Sem Nome", autor: "Petra Sul", descricao: "Após um naufrágio, cinco sobreviventes chegam a uma ilha que muda de lugar a cada maré. Para escapar, precisam entender as regras de um lugar que não deveria existir.", tags: ["naufrágio", "ilha", "sobrevivência"] },
+            { titulo: "O Último Alpinista", autor: "Kiran Mehta", descricao: "Uma montanha no Himalaia ainda não conquistada esconde algo no cume. A equipe que tenta a subida descobre que a montanha escolhe quem pode chegar lá.", tags: ["montanha", "conquista", "mistério"] },
+        ],
+        biography: [
+            { titulo: "A Mulher que Inventou o Silêncio", autor: "Celeste Brandt", descricao: "A história real de uma compositora surda do século XX que revolucionou a música eletrônica sem nunca ter ouvido uma nota sequer. Uma vida de criação contra o impossível.", tags: ["música", "superação", "criatividade"] },
+            { titulo: "Código e Coragem", autor: "Yara Silveira", descricao: "Biografia de uma programadora nos anos 60 que, sem reconhecimento, escreveu os algoritmos que levaram o homem à Lua. A história que ninguém quis contar na época.", tags: ["tecnologia", "pioneirismo", "injustiça"] },
+        ],
+        'self-help': [
+            { titulo: "A Arte de Não Terminar", autor: "Bruno Cassela", descricao: "Para quem começa mil projetos e termina nenhum: um guia honesto sobre procrastinação criativa, perfeccionismo e como transformar rascunhos em realizações.", tags: ["produtividade", "criatividade", "hábitos"] },
+            { titulo: "Conversas com Seu Passado", autor: "Renata Vilas", descricao: "Uma abordagem prática para entender como memórias antigas moldam decisões de hoje — e como reescrever a narrativa que você conta para si mesmo.", tags: ["autoconhecimento", "memória", "mudança"] },
+        ],
+    };
 
-        const prompt = `Você é um curador literário especialista. Com base no perfil abaixo, crie EXATAMENTE 10 recomendações de livros fictícios (inventados por você) personalizadas.
+    function gerarRecomendacoes(perfil) {
+        const generos = perfil.generosFavoritos;
+        const livros = [];
+        const evitar = perfil.temasEvitar || [];
 
-PERFIL DO LEITOR:
-- Gêneros favoritos: ${generos}
-- Temas a evitar: ${evitar}
-- Final preferido: ${final}
-- Humor da história: ${humor}
-- Autores de referência: ${autores}
+        // Distribuir livros pelos gêneros selecionados
+        const porGenero = Math.ceil(10 / generos.length);
+        for (const genero of generos) {
+            const banco = BANCO[genero] || [];
+            // Embaralhar e pegar os primeiros
+            const embaralhado = banco.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < Math.min(porGenero, embaralhado.length); i++) {
+                if (livros.length >= 10) break;
+                livros.push({ ...embaralhado[i], genero, match: Math.floor(Math.random() * 15) + 84 });
+            }
+        }
 
-Retorne APENAS um JSON válido (sem markdown, sem texto extra) no formato abaixo:
-{
-  "livros": [
-    {
-      "titulo": "Título do Livro",
-      "autor": "Nome Fictício do Autor",
-      "genero": "um dos gêneros solicitados",
-      "descricao": "Sinopse envolvente com 2-3 frases que desperte curiosidade.",
-      "tags": ["tag1", "tag2", "tag3"],
-      "match": 95
-    }
-  ]
-}
+        // Se ainda falta, completar com outros gêneros
+        if (livros.length < 10) {
+            for (const genero of Object.keys(BANCO)) {
+                if (generos.includes(genero)) continue;
+                const banco = (BANCO[genero] || []).sort(() => Math.random() - 0.5);
+                for (const livro of banco) {
+                    if (livros.length >= 10) break;
+                    livros.push({ ...livro, genero, match: Math.floor(Math.random() * 10) + 72 });
+                }
+                if (livros.length >= 10) break;
+            }
+        }
 
-Regras:
-- Todos os livros e autores são completamente inventados
-- O campo "match" é um número de 70 a 99 indicando compatibilidade com o perfil
-- Tags são palavras-chave curtas (máx 3 por livro)
-- Varie os gêneros conforme as preferências
-- NÃO inclua temas da lista de evitar`;
+        // Embaralhar resultado final
+        livros.sort(() => Math.random() - 0.5);
 
-        try {
-            const res = await fetch("https://api.anthropic.com/v1/messages", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "anthropic-dangerous-direct-browser-access": "true"
-                },
-                body: JSON.stringify({
-                    model: "claude-sonnet-4-20250514",
-                    max_tokens: 2000,
-                    messages: [{ role: "user", content: prompt }]
-                })
-            });
-
-            const data = await res.json();
-            const raw  = data.content?.[0]?.text || "";
-            const clean = raw.replace(/```json|```/g, "").trim();
-            const parsed = JSON.parse(clean);
-
+        // Simular delay de "processamento"
+        setTimeout(() => {
             document.getElementById('recom-loading').style.display = 'none';
             document.getElementById('recom-header').style.display  = 'block';
             document.getElementById('recom-nome').textContent = perfil.nome;
             document.getElementById('recom-footer').style.display = 'block';
-
-            renderizarCards(parsed.livros, perfil);
-
-        } catch (err) {
-            console.error("Erro ao gerar recomendações:", err);
-            document.getElementById('recom-loading').style.display = 'none';
-            document.getElementById('recom-erro').style.display    = 'block';
-        }
+            renderizarCards(livros.slice(0, 10), perfil);
+        }, 1800);
     }
 
     function renderizarCards(livros, perfil) {
