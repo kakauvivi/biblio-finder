@@ -986,13 +986,19 @@ Regras:
                     "anthropic-dangerous-direct-browser-access": "true"
                 },
                 body: JSON.stringify({
-                    model: "claude-sonnet-4-20250514",
+                    model: "claude-sonnet-4-5",
                     max_tokens: 2000,
                     messages: [{ role: "user", content: prompt }]
                 })
             });
 
             const data = await res.json();
+
+            // Checar erro da API antes de tentar parsear
+            if (data.error) {
+                throw new Error(`API Error: ${data.error.type} — ${data.error.message}`);
+            }
+
             const raw  = data.content?.[0]?.text || "";
             const clean = raw.replace(/```json|```/g, "").trim();
             const parsed = JSON.parse(clean);
