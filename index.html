@@ -356,56 +356,145 @@
         .form-step { display: none; }
         .form-step.active { display: block; }
 
-        /* ── Tela de sucesso ── */
-        #success-screen {
-            display: none;
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-
-        #success-screen.active { display: block; }
-
         .success-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+            width: 70px; height: 70px; border-radius: 50%;
             background: rgba(212,175,55,0.12);
             border: 2px solid var(--dourado);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 1.5rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; margin: 0 auto 1.2rem;
         }
-
         .success-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            color: var(--dourado);
-            margin-bottom: 0.5rem;
+            font-size: 1.6rem; color: var(--dourado); margin-bottom: 0.4rem;
         }
-
-        .success-sub {
-            color: #aaa;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
+        .success-sub { color: #aaa; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
         .btn-goto {
-            display: inline-block;
-            background: var(--dourado);
-            color: #000;
-            padding: 14px 40px;
-            border-radius: var(--radius);
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            text-decoration: none;
-            transition: box-shadow 0.2s;
+            display: inline-block; background: var(--dourado); color: #000;
+            padding: 13px 36px; border-radius: var(--radius);
+            font-family: 'Quicksand', sans-serif; font-weight: 700;
+            font-size: 0.95rem; text-decoration: none; transition: box-shadow 0.2s;
+        }
+        .btn-goto:hover { box-shadow: 0 0 20px rgba(212,175,55,0.5); }
+
+        /* ── Tela de recomendações ── */
+        #recom-screen { display: none; }
+        #recom-screen.active { display: block; }
+
+        .recom-header { text-align: center; padding: 2rem 1rem 1rem; }
+
+        .recom-loading-wrap {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 3rem 1rem; gap: 1rem;
         }
 
-        .btn-goto:hover { box-shadow: 0 0 20px rgba(212,175,55,0.5); }
+        .recom-spinner {
+            width: 44px; height: 44px;
+            border: 3px solid rgba(212,175,55,0.15);
+            border-top-color: var(--dourado);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .recom-loading-txt {
+            color: var(--dourado); font-size: 0.95rem;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .recom-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 8px 0 16px;
+        }
+
+        @media (min-width: 480px) {
+            .recom-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .recom-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(212,175,55,0.12);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            opacity: 0; transform: translateY(16px);
+            animation: fadeUp 0.4s ease forwards;
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .recom-cover {
+            width: 100%; aspect-ratio: 2/3;
+            object-fit: cover; display: block;
+            background: #1a1a1a;
+        }
+
+        .recom-cover-placeholder {
+            width: 100%; aspect-ratio: 2/3;
+            background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; gap: 8px;
+        }
+
+        .recom-cover-emoji { font-size: 2.2rem; }
+        .recom-cover-genre {
+            font-size: 0.65rem; color: rgba(212,175,55,0.5);
+            text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .recom-body { padding: 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+
+        .recom-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--dourado); font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+            line-height: 1.3; margin: 0;
+        }
+
+        .recom-author { color: #888; font-size: 0.75rem; margin: 0; }
+
+        .recom-desc {
+            color: #bbb; font-size: 0.75rem; line-height: 1.5;
+            margin: 4px 0 0; flex: 1;
+            display: -webkit-box; -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        .recom-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+
+        .recom-tag {
+            background: rgba(212,175,55,0.08);
+            border: 1px solid rgba(212,175,55,0.2);
+            color: rgba(212,175,55,0.7);
+            font-size: 0.65rem; padding: 2px 8px;
+            border-radius: 20px; font-weight: 600;
+        }
+
+        .recom-match {
+            display: flex; align-items: center; gap: 4px;
+            margin-top: 6px;
+        }
+
+        .recom-match-bar-wrap {
+            flex: 1; height: 3px;
+            background: rgba(255,255,255,0.08); border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .recom-match-bar {
+            height: 100%; background: var(--dourado);
+            border-radius: 2px;
+            transition: width 0.8s ease;
+        }
+
+        .recom-match-pct {
+            font-size: 0.68rem; color: var(--dourado); font-weight: 600;
+            white-space: nowrap;
+        }
 
         /* ── Barra de progresso ── */
         .progress-bar-wrap {
@@ -648,15 +737,37 @@
         </div>
     </div>
 
-    <!-- ── TELA DE SUCESSO ── -->
-    <div id="success-screen">
-        <div class="success-icon">✓</div>
-        <h2 class="success-title">Perfil criado!</h2>
-        <p class="success-sub">
-            Suas preferências foram salvas.<br>
-            Agora vamos encontrar os livros perfeitos para você.
-        </p>
-        <a href="inscricao.html" class="btn-goto">Explorar livros →</a>
+    <!-- ── TELA DE RECOMENDAÇÕES ── -->
+    <div id="recom-screen">
+        <!-- Cabeçalho da seção -->
+        <div class="recom-header" id="recom-header" style="display:none">
+            <div class="success-icon">✓</div>
+            <h2 class="success-title">Perfil criado, <span id="recom-nome"></span>!</h2>
+            <p class="success-sub">Aqui estão os livros feitos para você.</p>
+        </div>
+
+        <!-- Estado de loading -->
+        <div id="recom-loading" style="display:none">
+            <div class="recom-loading-wrap">
+                <div class="recom-spinner"></div>
+                <p class="recom-loading-txt">✨ Analisando seu perfil e gerando recomendações...</p>
+            </div>
+        </div>
+
+        <!-- Grid de cards -->
+        <div id="recom-grid" class="recom-grid"></div>
+
+        <!-- Erro -->
+        <div id="recom-erro" style="display:none;text-align:center;color:#bbb;padding:2rem;line-height:1.8">
+            ⚠️ Não foi possível gerar recomendações agora.<br>
+            <small>Verifique sua conexão e tente novamente.</small><br><br>
+            <a href="inscricao.html" class="btn-goto" style="font-size:0.9rem;padding:10px 28px">Explorar livros →</a>
+        </div>
+
+        <!-- Botão final -->
+        <div id="recom-footer" style="display:none;text-align:center;margin-top:2rem;padding-bottom:3rem">
+            <a href="inscricao.html" class="btn-goto">Explorar mais livros →</a>
+        </div>
     </div>
 </main>
 
@@ -790,7 +901,7 @@
     });
 
     // ── Finalizar ──
-    function finalizar() {
+    async function finalizar() {
         if (!validarPasso(3)) return;
 
         // Salvar perfil no localStorage
@@ -809,12 +920,136 @@
         };
         localStorage.setItem('bibliofinder_perfil', JSON.stringify(perfil));
 
-        // Exibir tela de sucesso
+        // Esconder formulário e stepper
         document.getElementById(`step-${currentStep}`).classList.remove('active');
         document.getElementById('stepper').style.display = 'none';
         document.querySelector('.progress-bar-wrap').style.display = 'none';
-        document.getElementById('success-screen').classList.add('active');
+
+        // Mostrar tela de recomendações em loading
+        const recomScreen = document.getElementById('recom-screen');
+        recomScreen.classList.add('active');
+        document.getElementById('recom-loading').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        await gerarRecomendacoes(perfil);
+    }
+
+    // Emojis por gênero para as capas placeholder
+    const GENRE_EMOJI = {
+        fantasy: '🧙', romance: '💕', suspense: '🔍', horror: '👁️',
+        'science fiction': '🚀', history: '⚔️', adventure: '🗺️',
+        biography: '📜', 'self-help': '🌱',
+    };
+
+    async function gerarRecomendacoes(perfil) {
+        const generos = perfil.generosFavoritos.join(', ');
+        const evitar  = perfil.temasEvitar.length ? perfil.temasEvitar.join(', ') : 'nenhum';
+        const final   = perfil.finalPreferido || 'qualquer';
+        const humor   = perfil.humorPreferido || 'qualquer';
+        const autores = perfil.autoresFavoritos || 'não informado';
+
+        const prompt = `Você é um curador literário especialista. Com base no perfil abaixo, crie EXATAMENTE 10 recomendações de livros fictícios (inventados por você) personalizadas.
+
+PERFIL DO LEITOR:
+- Gêneros favoritos: ${generos}
+- Temas a evitar: ${evitar}
+- Final preferido: ${final}
+- Humor da história: ${humor}
+- Autores de referência: ${autores}
+
+Retorne APENAS um JSON válido (sem markdown, sem texto extra) no formato abaixo:
+{
+  "livros": [
+    {
+      "titulo": "Título do Livro",
+      "autor": "Nome Fictício do Autor",
+      "genero": "um dos gêneros solicitados",
+      "descricao": "Sinopse envolvente com 2-3 frases que desperte curiosidade.",
+      "tags": ["tag1", "tag2", "tag3"],
+      "match": 95
+    }
+  ]
+}
+
+Regras:
+- Todos os livros e autores são completamente inventados
+- O campo "match" é um número de 70 a 99 indicando compatibilidade com o perfil
+- Tags são palavras-chave curtas (máx 3 por livro)
+- Varie os gêneros conforme as preferências
+- NÃO inclua temas da lista de evitar`;
+
+        try {
+            const res = await fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "anthropic-dangerous-direct-browser-access": "true"
+                },
+                body: JSON.stringify({
+                    model: "claude-sonnet-4-20250514",
+                    max_tokens: 2000,
+                    messages: [{ role: "user", content: prompt }]
+                })
+            });
+
+            const data = await res.json();
+            const raw  = data.content?.[0]?.text || "";
+            const clean = raw.replace(/```json|```/g, "").trim();
+            const parsed = JSON.parse(clean);
+
+            document.getElementById('recom-loading').style.display = 'none';
+            document.getElementById('recom-header').style.display  = 'block';
+            document.getElementById('recom-nome').textContent = perfil.nome;
+            document.getElementById('recom-footer').style.display = 'block';
+
+            renderizarCards(parsed.livros, perfil);
+
+        } catch (err) {
+            console.error("Erro ao gerar recomendações:", err);
+            document.getElementById('recom-loading').style.display = 'none';
+            document.getElementById('recom-erro').style.display    = 'block';
+        }
+    }
+
+    function renderizarCards(livros, perfil) {
+        const grid = document.getElementById('recom-grid');
+        grid.innerHTML = '';
+
+        livros.forEach((livro, i) => {
+            const emoji = GENRE_EMOJI[livro.genero?.toLowerCase()] || '📖';
+            const tagsHtml = (livro.tags || []).map(t => `<span class="recom-tag">${t}</span>`).join('');
+            const matchPct = Math.min(99, Math.max(70, livro.match || 85));
+
+            const card = document.createElement('div');
+            card.className = 'recom-card';
+            card.style.animationDelay = `${i * 0.07}s`;
+            card.innerHTML = `
+                <div class="recom-cover-placeholder">
+                    <span class="recom-cover-emoji">${emoji}</span>
+                    <span class="recom-cover-genre">${livro.genero || ''}</span>
+                </div>
+                <div class="recom-body">
+                    <h3 class="recom-title">${livro.titulo}</h3>
+                    <p class="recom-author">${livro.autor}</p>
+                    <p class="recom-desc">${livro.descricao}</p>
+                    <div class="recom-tags">${tagsHtml}</div>
+                    <div class="recom-match">
+                        <div class="recom-match-bar-wrap">
+                            <div class="recom-match-bar" style="width: 0%" data-pct="${matchPct}"></div>
+                        </div>
+                        <span class="recom-match-pct">${matchPct}%</span>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // Animar barras de match após render
+        setTimeout(() => {
+            document.querySelectorAll('.recom-match-bar').forEach(bar => {
+                bar.style.width = bar.dataset.pct + '%';
+            });
+        }, 300);
     }
 </script>
 </body>
