@@ -8,555 +8,102 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --preto: #050505;
-            --dourado: #d4af37;
-            --ouro-claro: #fcf6ba;
-            --card-bg: #111111;
-            --radius: 50px;
-            --input-bg: #1a1a1a;
+            --preto: #050505; --dourado: #d4af37; --ouro-claro: #fcf6ba;
+            --card-bg: #111111; --radius: 50px; --input-bg: #1a1a1a;
             --borda: rgba(212, 175, 55, 0.3);
         }
-
         *, *::before, *::after { box-sizing: border-box; }
+        body { background-color: var(--preto); color: white; font-family: 'Quicksand', sans-serif; margin: 0; min-height: 100vh; }
 
-        body {
-            background-color: var(--preto);
-            color: white;
-            font-family: 'Quicksand', sans-serif;
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        /* ── Header ── */
-        .main-header {
-            text-align: center;
-            padding: 2.5rem 1rem 2rem;
-            background: radial-gradient(circle at top, #1a1a1a 0%, #050505 100%);
-            border-bottom: 1px solid var(--borda);
-            border-radius: 0 0 60px 60px;
-        }
-
-        .logo-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .logo-esfera {
-            width: 120px;
-            height: auto;
-        }
-
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.4rem, 5vw, 2rem);
-            letter-spacing: 3px;
-            margin: 8px 0 4px;
-        }
-
+        .main-header { text-align: center; padding: 2.5rem 1rem 2rem; background: radial-gradient(circle at top, #1a1a1a 0%, #050505 100%); border-bottom: 1px solid var(--borda); border-radius: 0 0 60px 60px; }
+        .brand-name { font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 5vw, 2rem); letter-spacing: 3px; margin: 8px 0 4px; }
         .gold-text { color: var(--dourado); text-shadow: 0 0 15px rgba(212,175,55,0.5); }
+        .page-subtitle { font-family: 'Playfair Display', serif; font-style: italic; color: #bbb; font-size: clamp(0.9rem, 3vw, 1.1rem); margin: 0.3rem 0 0; }
 
-        .page-subtitle {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            color: #bbb;
-            font-size: clamp(0.9rem, 3vw, 1.1rem);
-            margin: 0.3rem 0 0;
-        }
+        main { max-width: 700px; margin: 0 auto; padding: 2rem 1.2rem 4rem; }
 
-        /* ── Layout principal ── */
-        main {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 2rem 1.2rem 4rem;
-        }
-
-        /* ── Stepper ── */
-        .stepper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            margin-bottom: 2.5rem;
-        }
-
-        .step-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            position: relative;
-            flex: 1;
-            max-width: 80px;
-        }
-
-        .step-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 2px solid var(--borda);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #666;
-            background: var(--card-bg);
-            transition: border-color 0.3s, color 0.3s, background 0.3s;
-            position: relative;
-            z-index: 1;
-        }
-
-        .step-item.active .step-circle,
-        .step-item.done .step-circle {
-            border-color: var(--dourado);
-            color: var(--preto);
-            background: var(--dourado);
-        }
-
-        .step-label {
-            font-size: 0.7rem;
-            color: #555;
-            text-align: center;
-            white-space: nowrap;
-        }
-
+        .stepper { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2.5rem; }
+        .step-item { display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; flex: 1; max-width: 80px; }
+        .step-circle { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--borda); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: #666; background: var(--card-bg); transition: border-color 0.3s, color 0.3s, background 0.3s; position: relative; z-index: 1; }
+        .step-item.active .step-circle, .step-item.done .step-circle { border-color: var(--dourado); color: var(--preto); background: var(--dourado); }
+        .step-label { font-size: 0.7rem; color: #555; text-align: center; white-space: nowrap; }
         .step-item.active .step-label { color: var(--dourado); }
-
-        .step-line {
-            flex: 1;
-            height: 2px;
-            background: var(--borda);
-            margin-top: -22px;
-        }
-
+        .step-line { flex: 1; height: 2px; background: var(--borda); margin-top: -22px; }
         .step-line.done { background: var(--dourado); }
 
-        /* ── Cards de seção ── */
-        .section-card {
-            background: var(--card-bg);
-            border: 1px solid var(--borda);
-            border-radius: 24px;
-            padding: 1.8rem;
-            margin-bottom: 1.5rem;
-        }
+        .section-card { background: var(--card-bg); border: 1px solid var(--borda); border-radius: 24px; padding: 1.8rem; margin-bottom: 1.5rem; }
+        .section-title { font-family: 'Playfair Display', serif; color: var(--dourado); font-size: 1.1rem; margin: 0 0 1.2rem; display: flex; align-items: center; gap: 10px; }
+        .section-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
 
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            color: var(--dourado);
-            font-size: 1.1rem;
-            margin: 0 0 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: rgba(212,175,55,0.1);
-            border: 1px solid rgba(212,175,55,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            flex-shrink: 0;
-        }
-
-        /* ── Inputs ── */
-        label.field-label {
-            display: block;
-            font-size: 0.85rem;
-            color: #aaa;
-            margin-bottom: 6px;
-            margin-top: 16px;
-        }
-
+        label.field-label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 6px; margin-top: 16px; }
         label.field-label:first-child { margin-top: 0; }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select,
-        textarea {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--borda);
-            border-radius: 12px;
-            color: white;
-            font-family: 'Quicksand', sans-serif;
-            font-size: 0.95rem;
-            padding: 12px 16px;
-            outline: none;
-            transition: border-color 0.3s;
-            appearance: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus,
-        select:focus,
-        textarea:focus {
-            border-color: var(--dourado);
-        }
-
-        select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            padding-right: 40px;
-            cursor: pointer;
-        }
-
+        input[type="text"], input[type="email"], input[type="password"], select, textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--borda); border-radius: 12px; color: white; font-family: 'Quicksand', sans-serif; font-size: 0.95rem; padding: 12px 16px; outline: none; transition: border-color 0.3s; appearance: none; -webkit-appearance: none; }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus, textarea:focus { border-color: var(--dourado); }
+        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23d4af37' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; cursor: pointer; }
         select option { background: #1a1a1a; color: white; }
-
         textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
 
-        /* ── Chips de seleção múltipla ── */
-        .chips-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 4px;
-        }
+        .chips-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+        .chip { background: transparent; border: 1.5px solid var(--borda); color: #aaa; padding: 7px 16px; border-radius: var(--radius); cursor: pointer; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.82rem; transition: all 0.2s ease; touch-action: manipulation; user-select: none; }
+        .chip.selected { background: rgba(212,175,55,0.15); border-color: var(--dourado); color: var(--dourado); }
 
-        .chip {
-            background: transparent;
-            border: 1.5px solid var(--borda);
-            color: #aaa;
-            padding: 7px 16px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            font-size: 0.82rem;
-            transition: all 0.2s ease;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-
-        .chip.selected {
-            background: rgba(212,175,55,0.15);
-            border-color: var(--dourado);
-            color: var(--dourado);
-        }
-
-        /* ── Radio / Toggle ── */
-        .toggle-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .toggle-option {
-            flex: 1;
-            min-width: 120px;
-            background: var(--input-bg);
-            border: 1.5px solid var(--borda);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            cursor: pointer;
-            font-size: 0.85rem;
-            color: #888;
-            transition: all 0.2s;
-            touch-action: manipulation;
-        }
-
-        .toggle-option.selected {
-            border-color: var(--dourado);
-            background: rgba(212,175,55,0.1);
-            color: var(--dourado);
-        }
-
+        .toggle-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .toggle-option { flex: 1; min-width: 120px; background: var(--input-bg); border: 1.5px solid var(--borda); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; font-size: 0.85rem; color: #888; transition: all 0.2s; }
+        .toggle-option.selected { border-color: var(--dourado); background: rgba(212,175,55,0.1); color: var(--dourado); }
         .toggle-icon { display: block; font-size: 1.2rem; margin-bottom: 4px; }
 
-        /* ── Aviso opcional ── */
-        .optional-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.05);
-            color: #666;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 20px;
-            margin-left: 8px;
-            vertical-align: middle;
-            font-family: 'Quicksand', sans-serif;
-        }
+        .optional-badge { display: inline-block; background: rgba(255,255,255,0.05); color: #666; font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; margin-left: 8px; vertical-align: middle; font-family: 'Quicksand', sans-serif; }
 
-        /* ── Botões de navegação ── */
-        .nav-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
-        }
-
-        .btn-back {
-            background: transparent;
-            border: 1.5px solid var(--borda);
-            color: #aaa;
-            padding: 12px 28px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-
+        .nav-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 1.5rem; }
+        .btn-back { background: transparent; border: 1.5px solid var(--borda); color: #aaa; padding: 12px 28px; border-radius: var(--radius); cursor: pointer; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
         .btn-back:hover { border-color: #aaa; color: white; }
+        .btn-next, .btn-submit { background: var(--dourado); border: none; color: #000; padding: 12px 32px; border-radius: var(--radius); cursor: pointer; font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.9rem; transition: box-shadow 0.2s; }
+        .btn-next:hover, .btn-submit:hover { box-shadow: 0 0 18px rgba(212,175,55,0.5); }
+        .btn-next:disabled, .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        .btn-next, .btn-submit {
-            background: var(--dourado);
-            border: none;
-            color: #000;
-            padding: 12px 32px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-family: 'Quicksand', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            transition: box-shadow 0.2s;
-            touch-action: manipulation;
-        }
-
-        .btn-next:hover, .btn-submit:hover {
-            box-shadow: 0 0 18px rgba(212,175,55,0.5);
-        }
-
-        /* ── Erro de validação ── */
-        .field-error {
-            color: #e07070;
-            font-size: 0.78rem;
-            margin-top: 5px;
-            display: none;
-        }
-
+        .field-error { color: #e07070; font-size: 0.78rem; margin-top: 5px; display: none; }
         .field-error.visible { display: block; }
 
-        /* ── Link para login ── */
-        .login-link {
-            text-align: center;
-            margin-top: 1.5rem;
-            font-size: 0.88rem;
-            color: #666;
-        }
+        .strength-wrap { display: flex; gap: 5px; margin-top: 8px; }
+        .strength-bar { flex: 1; height: 4px; border-radius: 2px; background: #333; transition: background 0.3s; }
+        .strength-bar.weak { background: #e07070; }
+        .strength-bar.medium { background: #e0a030; }
+        .strength-bar.strong { background: #70c070; }
+        .strength-label { font-size: 0.75rem; color: #666; margin: 4px 0 0; }
 
-        .login-link a {
-            color: var(--dourado);
-            text-decoration: none;
-            font-weight: 600;
-        }
+        .progress-bar-wrap { height: 3px; background: rgba(212,175,55,0.1); margin-bottom: 2rem; border-radius: 2px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--dourado); border-radius: 2px; transition: width 0.4s ease; }
 
-        /* ── Passos (controle de exibição) ── */
+        .login-link { text-align: center; margin-top: 1.5rem; font-size: 0.88rem; color: #666; }
+        .login-link a { color: var(--dourado); text-decoration: none; font-weight: 600; }
+
         .form-step { display: none; }
         .form-step.active { display: block; }
 
-        .success-icon {
-            width: 70px; height: 70px; border-radius: 50%;
-            background: rgba(212,175,55,0.12);
-            border: 2px solid var(--dourado);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; margin: 0 auto 1.2rem;
-        }
-        .success-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem; color: var(--dourado); margin-bottom: 0.4rem;
-        }
+        .success-icon { width: 70px; height: 70px; border-radius: 50%; background: rgba(212,175,55,0.12); border: 2px solid var(--dourado); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 1.2rem; }
+        .success-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--dourado); margin-bottom: 0.4rem; }
         .success-sub { color: #aaa; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
-        .btn-goto {
-            display: inline-block; background: var(--dourado); color: #000;
-            padding: 13px 36px; border-radius: var(--radius);
-            font-family: 'Quicksand', sans-serif; font-weight: 700;
-            font-size: 0.95rem; text-decoration: none; transition: box-shadow 0.2s;
-        }
+        .btn-goto { display: inline-block; background: var(--dourado); color: #000; padding: 13px 36px; border-radius: var(--radius); font-family: 'Quicksand', sans-serif; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: box-shadow 0.2s; }
         .btn-goto:hover { box-shadow: 0 0 20px rgba(212,175,55,0.5); }
 
-        /* ── Tela de recomendações ── */
-        #recom-screen { display: none; }
-        #recom-screen.active { display: block; }
+        #success-screen { display: none; text-align: center; padding: 3rem 1rem; }
+        #success-screen.active { display: block; }
 
-        .recom-header { text-align: center; padding: 2rem 1rem 1rem; }
-
-        .recom-loading-wrap {
-            display: flex; flex-direction: column; align-items: center;
-            padding: 3rem 1rem; gap: 1rem;
-        }
-
-        .recom-spinner {
-            width: 44px; height: 44px;
-            border: 3px solid rgba(212,175,55,0.15);
-            border-top-color: var(--dourado);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        .recom-loading-txt {
-            color: var(--dourado); font-size: 0.95rem;
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-
-        .recom-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            padding: 8px 0 16px;
-        }
-
-        @media (min-width: 480px) {
-            .recom-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        .recom-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(212,175,55,0.12);
-            border-radius: 20px;
-            overflow: hidden;
-            display: flex; flex-direction: column;
-            opacity: 0; transform: translateY(16px);
-            animation: fadeUp 0.4s ease forwards;
-        }
-
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .recom-cover {
-            width: 100%; aspect-ratio: 2/3;
-            object-fit: cover; display: block;
-            background: #1a1a1a;
-        }
-
-        .recom-cover-placeholder {
-            width: 100%; aspect-ratio: 2/3;
-            background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
-            display: flex; align-items: center; justify-content: center;
-            flex-direction: column; gap: 8px;
-        }
-
-        .recom-cover-emoji { font-size: 2.2rem; }
-        .recom-cover-genre {
-            font-size: 0.65rem; color: rgba(212,175,55,0.5);
-            text-transform: uppercase; letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .recom-body { padding: 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
-
-        .recom-title {
-            font-family: 'Playfair Display', serif;
-            color: var(--dourado); font-size: clamp(0.8rem, 2.5vw, 0.95rem);
-            line-height: 1.3; margin: 0;
-        }
-
-        .recom-author { color: #888; font-size: 0.75rem; margin: 0; }
-
-        .recom-desc {
-            color: #bbb; font-size: 0.75rem; line-height: 1.5;
-            margin: 4px 0 0; flex: 1;
-            display: -webkit-box; -webkit-line-clamp: 4;
-            -webkit-box-orient: vertical; overflow: hidden;
-        }
-
-        .recom-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
-
-        .recom-tag {
-            background: rgba(212,175,55,0.08);
-            border: 1px solid rgba(212,175,55,0.2);
-            color: rgba(212,175,55,0.7);
-            font-size: 0.65rem; padding: 2px 8px;
-            border-radius: 20px; font-weight: 600;
-        }
-
-        .recom-match {
-            display: flex; align-items: center; gap: 4px;
-            margin-top: 6px;
-        }
-
-        .recom-match-bar-wrap {
-            flex: 1; height: 3px;
-            background: rgba(255,255,255,0.08); border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .recom-match-bar {
-            height: 100%; background: var(--dourado);
-            border-radius: 2px;
-            transition: width 0.8s ease;
-        }
-
-        .recom-match-pct {
-            font-size: 0.68rem; color: var(--dourado); font-weight: 600;
-            white-space: nowrap;
-        }
-
-        /* ── Barra de progresso ── */
-        .progress-bar-wrap {
-            width: 100%;
-            height: 3px;
-            background: rgba(212,175,55,0.1);
-            border-radius: 2px;
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background: var(--dourado);
-            border-radius: 2px;
-            transition: width 0.4s ease;
-        }
-
-        /* ── Força de senha ── */
-        .password-strength {
-            margin-top: 8px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .strength-bar {
-            flex: 1;
-            height: 3px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 2px;
-            transition: background 0.3s;
-        }
-
-        .strength-bar.weak   { background: #e07070; }
-        .strength-bar.medium { background: #e0b070; }
-        .strength-bar.strong { background: #70c070; }
-
-        .strength-label {
-            font-size: 0.75rem;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        @media (max-width: 480px) {
-            main { padding: 1.5rem 1rem 3rem; }
-            .section-card { padding: 1.3rem; }
-            .nav-buttons { flex-wrap: wrap; }
-            .btn-back, .btn-next, .btn-submit { flex: 1; text-align: center; }
-        }
+        .msg-erro-geral { background: rgba(200,70,70,0.12); border: 1px solid rgba(200,70,70,0.3); color: #e07070; border-radius: 12px; padding: 10px 14px; font-size: 0.85rem; margin-top: 1rem; display: none; }
+        .msg-erro-geral.vis { display: block; }
     </style>
 </head>
 <body>
-
 <header class="main-header">
-    <div class="logo-area">
-        <h1 class="brand-name">BIBLIO <span class="gold-text">FINDER</span></h1>
-        <p class="page-subtitle">Crie seu perfil literário</p>
-    </div>
+    <h1 class="brand-name">BIBLIO <span class="gold-text">FINDER</span></h1>
+    <p class="page-subtitle">Crie seu perfil literário</p>
 </header>
 
 <main>
-    <!-- Stepper -->
+    <div class="progress-bar-wrap">
+        <div class="progress-bar" id="progress-bar" style="width:33%"></div>
+    </div>
+
     <div class="stepper" id="stepper">
         <div class="step-item active" id="step-dot-1">
             <div class="step-circle">1</div>
@@ -570,22 +117,14 @@
         <div class="step-line" id="line-2-3"></div>
         <div class="step-item" id="step-dot-3">
             <div class="step-circle">3</div>
-            <span class="step-label">Preferências</span>
+            <span class="step-label">Gostos</span>
         </div>
     </div>
 
-    <!-- Barra de progresso -->
-    <div class="progress-bar-wrap">
-        <div class="progress-bar-fill" id="progress-bar" style="width: 33%"></div>
-    </div>
-
-    <!-- ── PASSO 1: Dados da conta ── -->
+    <!-- PASSO 1: Credenciais -->
     <div class="form-step active" id="step-1">
         <div class="section-card">
-            <h2 class="section-title">
-                <span class="section-icon">✉</span>
-                Dados de acesso
-            </h2>
+            <h2 class="section-title"><span class="section-icon">✉</span>Acesso</h2>
 
             <label class="field-label" for="email">E-mail</label>
             <input type="email" id="email" placeholder="seu@email.com" autocomplete="email">
@@ -593,33 +132,26 @@
 
             <label class="field-label" for="senha">Senha</label>
             <input type="password" id="senha" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-            <div class="password-strength">
-                <div class="strength-bar" id="sb1"></div>
-                <div class="strength-bar" id="sb2"></div>
-                <div class="strength-bar" id="sb3"></div>
-            </div>
+            <div class="strength-wrap"><div class="strength-bar" id="sb1"></div><div class="strength-bar" id="sb2"></div><div class="strength-bar" id="sb3"></div></div>
             <p class="strength-label" id="strength-label"></p>
             <span class="field-error" id="senha-error">A senha deve ter ao menos 6 caracteres.</span>
 
             <label class="field-label" for="senha-conf">Confirmar senha</label>
             <input type="password" id="senha-conf" placeholder="Repita a senha" autocomplete="new-password">
             <span class="field-error" id="senha-conf-error">As senhas não coincidem.</span>
-        </div>
 
+            <div class="msg-erro-geral" id="msg-erro-geral"></div>
+        </div>
         <div class="nav-buttons">
             <button class="btn-next" onclick="irPara(2)">Próximo →</button>
         </div>
-
-        <p class="login-link">Já tem conta? <a href="index.html">Entrar</a></p>
+        <p class="login-link">Já tem conta? <a href="login.html">Entrar</a></p>
     </div>
 
-    <!-- ── PASSO 2: Perfil pessoal ── -->
+    <!-- PASSO 2: Perfil pessoal -->
     <div class="form-step" id="step-2">
         <div class="section-card">
-            <h2 class="section-title">
-                <span class="section-icon">☺</span>
-                Sobre você
-            </h2>
+            <h2 class="section-title"><span class="section-icon">☺</span>Sobre você</h2>
 
             <label class="field-label" for="nome">Nome ou apelido</label>
             <input type="text" id="nome" placeholder="Como prefere ser chamado(a)?" autocomplete="nickname">
@@ -637,278 +169,215 @@
 
             <label class="field-label">Frequência de leitura <span class="optional-badge">opcional</span></label>
             <div class="toggle-group" id="frequencia">
-                <div class="toggle-option" data-val="raramente" onclick="toggleOption(this, 'frequencia')">
-                    <span class="toggle-icon">📚</span>Raramente
-                </div>
-                <div class="toggle-option" data-val="mensalmente" onclick="toggleOption(this, 'frequencia')">
-                    <span class="toggle-icon">📖</span>Mensalmente
-                </div>
-                <div class="toggle-option" data-val="semanalmente" onclick="toggleOption(this, 'frequencia')">
-                    <span class="toggle-icon">⚡</span>Semanalmente
-                </div>
+                <div class="toggle-option" data-val="raramente" onclick="toggleOption(this,'frequencia')"><span class="toggle-icon">📚</span>Raramente</div>
+                <div class="toggle-option" data-val="mensalmente" onclick="toggleOption(this,'frequencia')"><span class="toggle-icon">📖</span>Mensalmente</div>
+                <div class="toggle-option" data-val="semanalmente" onclick="toggleOption(this,'frequencia')"><span class="toggle-icon">⚡</span>Semanalmente</div>
             </div>
         </div>
-
         <div class="nav-buttons">
             <button class="btn-back" onclick="irPara(1)">← Voltar</button>
             <button class="btn-next" onclick="irPara(3)">Próximo →</button>
         </div>
     </div>
 
-    <!-- ── PASSO 3: Questionário Literário ── -->
+    <!-- PASSO 3: Questionário literário -->
     <div class="form-step" id="step-3">
         <div class="section-card">
-            <h2 class="section-title">
-                <span class="section-icon">★</span>
-                Gêneros favoritos <span class="optional-badge" style="font-family:'Quicksand';font-style:normal;font-size:0.7rem;color:#555;background:rgba(255,255,255,0.04);border-radius:20px;padding:2px 8px;margin-left:4px">selecione ao menos 1</span>
-            </h2>
-
+            <h2 class="section-title"><span class="section-icon">★</span>Gêneros favoritos <span class="optional-badge" style="font-family:'Quicksand';font-style:normal">selecione ao menos 1</span></h2>
             <div class="chips-group" id="generos">
-                <div class="chip" data-val="fantasy" onclick="toggleChip(this, 'generos')">Fantasia</div>
-                <div class="chip" data-val="romance" onclick="toggleChip(this, 'generos')">Romance</div>
-                <div class="chip" data-val="suspense" onclick="toggleChip(this, 'generos')">Suspense</div>
-                <div class="chip" data-val="horror" onclick="toggleChip(this, 'generos')">Terror</div>
-                <div class="chip" data-val="science fiction" onclick="toggleChip(this, 'generos')">Ficção Científica</div>
-                <div class="chip" data-val="history" onclick="toggleChip(this, 'generos')">Histórico</div>
-                <div class="chip" data-val="adventure" onclick="toggleChip(this, 'generos')">Aventura</div>
-                <div class="chip" data-val="biography" onclick="toggleChip(this, 'generos')">Biografia</div>
-                <div class="chip" data-val="self-help" onclick="toggleChip(this, 'generos')">Autoajuda</div>
+                <div class="chip" data-val="fantasy" onclick="toggleChip(this,'generos')">Fantasia</div>
+                <div class="chip" data-val="romance" onclick="toggleChip(this,'generos')">Romance</div>
+                <div class="chip" data-val="suspense" onclick="toggleChip(this,'generos')">Suspense</div>
+                <div class="chip" data-val="horror" onclick="toggleChip(this,'generos')">Terror</div>
+                <div class="chip" data-val="science fiction" onclick="toggleChip(this,'generos')">Ficção Científica</div>
+                <div class="chip" data-val="history" onclick="toggleChip(this,'generos')">Histórico</div>
+                <div class="chip" data-val="adventure" onclick="toggleChip(this,'generos')">Aventura</div>
+                <div class="chip" data-val="biography" onclick="toggleChip(this,'generos')">Biografia</div>
+                <div class="chip" data-val="self-help" onclick="toggleChip(this,'generos')">Autoajuda</div>
             </div>
             <span class="field-error" id="generos-error">Selecione ao menos um gênero.</span>
         </div>
 
         <div class="section-card">
-            <h2 class="section-title">
-                <span class="section-icon">⊘</span>
-                Temas a evitar <span class="optional-badge">opcional</span>
-            </h2>
+            <h2 class="section-title"><span class="section-icon">⊘</span>Temas a evitar <span class="optional-badge">opcional</span></h2>
             <div class="chips-group" id="evitar">
-                <div class="chip" data-val="violencia" onclick="toggleChip(this, 'evitar')">Violência extrema</div>
-                <div class="chip" data-val="guerra" onclick="toggleChip(this, 'evitar')">Guerra</div>
-                <div class="chip" data-val="abuso" onclick="toggleChip(this, 'evitar')">Abuso</div>
-                <div class="chip" data-val="religiao" onclick="toggleChip(this, 'evitar')">Religião</div>
-                <div class="chip" data-val="politica" onclick="toggleChip(this, 'evitar')">Política</div>
-                <div class="chip" data-val="morte" onclick="toggleChip(this, 'evitar')">Morte de animais</div>
+                <div class="chip" data-val="violencia" onclick="toggleChip(this,'evitar')">Violência extrema</div>
+                <div class="chip" data-val="guerra" onclick="toggleChip(this,'evitar')">Guerra</div>
+                <div class="chip" data-val="abuso" onclick="toggleChip(this,'evitar')">Abuso</div>
+                <div class="chip" data-val="religiao" onclick="toggleChip(this,'evitar')">Religião</div>
+                <div class="chip" data-val="politica" onclick="toggleChip(this,'evitar')">Política</div>
+                <div class="chip" data-val="morte" onclick="toggleChip(this,'evitar')">Morte de animais</div>
             </div>
         </div>
 
         <div class="section-card">
-            <h2 class="section-title">
-                <span class="section-icon">◑</span>
-                Preferências de leitura <span class="optional-badge">opcional</span>
-            </h2>
-
+            <h2 class="section-title"><span class="section-icon">◑</span>Preferências <span class="optional-badge">opcional</span></h2>
             <label class="field-label">Tipo de final preferido</label>
             <div class="toggle-group" id="final">
-                <div class="toggle-option" data-val="feliz" onclick="toggleOption(this, 'final')">
-                    <span class="toggle-icon">😊</span>Feliz
-                </div>
-                <div class="toggle-option" data-val="aberto" onclick="toggleOption(this, 'final')">
-                    <span class="toggle-icon">🌀</span>Aberto
-                </div>
-                <div class="toggle-option" data-val="triste" onclick="toggleOption(this, 'final')">
-                    <span class="toggle-icon">😢</span>Triste
-                </div>
-                <div class="toggle-option" data-val="qualquer" onclick="toggleOption(this, 'final')">
-                    <span class="toggle-icon">✨</span>Qualquer
-                </div>
+                <div class="toggle-option" data-val="feliz" onclick="toggleOption(this,'final')"><span class="toggle-icon">😊</span>Feliz</div>
+                <div class="toggle-option" data-val="aberto" onclick="toggleOption(this,'final')"><span class="toggle-icon">🌀</span>Aberto</div>
+                <div class="toggle-option" data-val="triste" onclick="toggleOption(this,'final')"><span class="toggle-icon">😢</span>Triste</div>
+                <div class="toggle-option" data-val="qualquer" onclick="toggleOption(this,'final')"><span class="toggle-icon">✨</span>Qualquer</div>
             </div>
-
             <label class="field-label" style="margin-top:20px">Humor da história</label>
             <div class="toggle-group" id="humor">
-                <div class="toggle-option" data-val="leve" onclick="toggleOption(this, 'humor')">
-                    <span class="toggle-icon">☀</span>Leve
-                </div>
-                <div class="toggle-option" data-val="serio" onclick="toggleOption(this, 'humor')">
-                    <span class="toggle-icon">🎭</span>Sério
-                </div>
-                <div class="toggle-option" data-val="sombrio" onclick="toggleOption(this, 'humor')">
-                    <span class="toggle-icon">🌑</span>Sombrio
-                </div>
+                <div class="toggle-option" data-val="leve" onclick="toggleOption(this,'humor')"><span class="toggle-icon">☀</span>Leve</div>
+                <div class="toggle-option" data-val="serio" onclick="toggleOption(this,'humor')"><span class="toggle-icon">🎭</span>Sério</div>
+                <div class="toggle-option" data-val="sombrio" onclick="toggleOption(this,'humor')"><span class="toggle-icon">🌑</span>Sombrio</div>
             </div>
-
             <label class="field-label" for="autores" style="margin-top:20px">Autores favoritos <span class="optional-badge">opcional</span></label>
-            <textarea id="autores" placeholder="Ex: Agatha Christie, J.K. Rowling, Gabriel García Márquez..."></textarea>
+            <textarea id="autores" placeholder="Ex: Agatha Christie, J.K. Rowling..."></textarea>
         </div>
 
         <div class="nav-buttons">
             <button class="btn-back" onclick="irPara(2)">← Voltar</button>
-            <button class="btn-submit" onclick="finalizar()">Criar meu perfil ✓</button>
+            <button class="btn-submit" id="btn-finalizar" onclick="finalizar()">Criar meu perfil ✓</button>
         </div>
     </div>
 
-    <!-- ── TELA DE RECOMENDAÇÕES ── -->
-    <div id="recom-screen">
-        <!-- Cabeçalho da seção -->
-        <div class="recom-header" id="recom-header" style="display:none">
-            <div class="success-icon">✓</div>
-            <h2 class="success-title">Perfil criado, <span id="recom-nome"></span>!</h2>
-            <p class="success-sub">Aqui estão os livros feitos para você.</p>
-        </div>
-
-        <!-- Estado de loading -->
-        <div id="recom-loading" style="display:none">
-            <div class="recom-loading-wrap">
-                <div class="recom-spinner"></div>
-                <p class="recom-loading-txt">✨ Analisando seu perfil e gerando recomendações...</p>
-            </div>
-        </div>
-
-        <!-- Grid de cards -->
-        <div id="recom-grid" class="recom-grid"></div>
-
-        <!-- Erro -->
-        <div id="recom-erro" style="display:none;text-align:center;color:#bbb;padding:2rem;line-height:1.8">
-            ⚠️ Não foi possível gerar recomendações agora.<br>
-            <small>Verifique sua conexão e tente novamente.</small><br><br>
-            <a href="index.html" class="btn-goto" style="font-size:0.9rem;padding:10px 28px">Explorar livros →</a>
-        </div>
-
-        <!-- Botão final -->
-        <div id="recom-footer" style="display:none;text-align:center;margin-top:2rem;padding-bottom:3rem">
-            <a href="index.html" class="btn-goto">Explorar mais livros →</a>
-        </div>
+    <!-- Tela de sucesso -->
+    <div id="success-screen">
+        <div class="success-icon">✓</div>
+        <h2 class="success-title">Conta criada!</h2>
+        <p class="success-sub">Seu perfil foi salvo. Agora você pode acessar sua conta em qualquer aparelho.</p>
+        <a href="index.html" class="btn-goto">Explorar a biblioteca →</a>
     </div>
 </main>
 
-<script>
-    let currentStep = 1;
-    const totalSteps = 3;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // Mapa de seleções
-    const selections = {
-        frequencia: null,
-        final: null,
-        humor: null,
-    };
+// ══ COLE SUAS CONFIGURAÇÕES DO FIREBASE AQUI ══
+const firebaseConfig = {
+  apiKey: "COLE_AQUI_SUA_API_KEY",
+  authDomain: "COLE_AQUI.firebaseapp.com",
+  projectId: "COLE_AQUI_SEU_PROJECT_ID",
+  storageBucket: "COLE_AQUI.appspot.com",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
+};
 
-    const chipSelections = {
-        generos: new Set(),
-        evitar: new Set(),
-    };
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-    // ── Navegação entre passos ──
-    function irPara(step) {
-        if (!validarPasso(currentStep)) return;
-        document.getElementById(`step-${currentStep}`).classList.remove('active');
-        currentStep = step;
-        document.getElementById(`step-${currentStep}`).classList.add('active');
-        atualizarStepper();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+// ── Estado ──
+let currentStep = 1;
+const totalSteps = 3;
+const selections = { frequencia: null, final: null, humor: null };
+const chipSelections = { generos: new Set(), evitar: new Set() };
+
+// ── Navegação ──
+window.irPara = function(step) {
+    if (!validarPasso(currentStep)) return;
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    currentStep = step;
+    document.getElementById(`step-${currentStep}`).classList.add('active');
+    atualizarStepper();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+function atualizarStepper() {
+    const progress = (currentStep / totalSteps) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+    for (let i = 1; i <= totalSteps; i++) {
+        const dot = document.getElementById(`step-dot-${i}`);
+        dot.classList.remove('active', 'done');
+        if (i < currentStep) dot.classList.add('done');
+        else if (i === currentStep) dot.classList.add('active');
     }
-
-    function atualizarStepper() {
-        const progress = (currentStep / totalSteps) * 100;
-        document.getElementById('progress-bar').style.width = progress + '%';
-
-        for (let i = 1; i <= totalSteps; i++) {
-            const dot = document.getElementById(`step-dot-${i}`);
-            dot.classList.remove('active', 'done');
-            if (i < currentStep) dot.classList.add('done');
-            else if (i === currentStep) dot.classList.add('active');
-        }
-
-        for (let i = 1; i < totalSteps; i++) {
-            const line = document.getElementById(`line-${i}-${i+1}`);
-            if (line) line.classList.toggle('done', i < currentStep);
-        }
+    for (let i = 1; i < totalSteps; i++) {
+        const line = document.getElementById(`line-${i}-${i+1}`);
+        if (line) line.classList.toggle('done', i < currentStep);
     }
+}
 
-    // ── Validação por passo ──
-    function validarPasso(step) {
-        let ok = true;
-
-        if (step === 1) {
-            const email = document.getElementById('email').value.trim();
-            const senha = document.getElementById('senha').value;
-            const conf  = document.getElementById('senha-conf').value;
-
-            const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-            mostrarErro('email-error', !emailOk);
-            if (!emailOk) ok = false;
-
-            const senhaOk = senha.length >= 6;
-            mostrarErro('senha-error', !senhaOk);
-            if (!senhaOk) ok = false;
-
-            const confOk = senha === conf && conf !== '';
-            mostrarErro('senha-conf-error', !confOk);
-            if (!confOk) ok = false;
-        }
-
-        if (step === 2) {
-            const nome = document.getElementById('nome').value.trim();
-            const nomeOk = nome.length > 0;
-            mostrarErro('nome-error', !nomeOk);
-            if (!nomeOk) ok = false;
-        }
-
-        if (step === 3) {
-            const genOk = chipSelections.generos.size > 0;
-            mostrarErro('generos-error', !genOk);
-            if (!genOk) ok = false;
-        }
-
-        return ok;
+function validarPasso(step) {
+    let ok = true;
+    if (step === 1) {
+        const email = document.getElementById('email').value.trim();
+        const senha = document.getElementById('senha').value;
+        const conf  = document.getElementById('senha-conf').value;
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        mostrarErro('email-error', !emailOk); if (!emailOk) ok = false;
+        const senhaOk = senha.length >= 6;
+        mostrarErro('senha-error', !senhaOk); if (!senhaOk) ok = false;
+        const confOk = senha === conf && conf !== '';
+        mostrarErro('senha-conf-error', !confOk); if (!confOk) ok = false;
     }
-
-    function mostrarErro(id, show) {
-        document.getElementById(id).classList.toggle('visible', show);
+    if (step === 2) {
+        const nomeOk = document.getElementById('nome').value.trim().length > 0;
+        mostrarErro('nome-error', !nomeOk); if (!nomeOk) ok = false;
     }
-
-    // ── Chips ──
-    function toggleChip(el, grupo) {
-        const val = el.getAttribute('data-val');
-        if (el.classList.contains('selected')) {
-            el.classList.remove('selected');
-            chipSelections[grupo].delete(val);
-        } else {
-            el.classList.add('selected');
-            chipSelections[grupo].add(val);
-        }
+    if (step === 3) {
+        const genOk = chipSelections.generos.size > 0;
+        mostrarErro('generos-error', !genOk); if (!genOk) ok = false;
     }
+    return ok;
+}
 
-    // ── Toggle options (radio) ──
-    function toggleOption(el, grupo) {
-        document.querySelectorAll(`#${grupo} .toggle-option`).forEach(o => o.classList.remove('selected'));
-        el.classList.add('selected');
-        selections[grupo] = el.getAttribute('data-val');
-    }
+function mostrarErro(id, show) {
+    document.getElementById(id).classList.toggle('visible', show);
+}
 
-    // ── Força de senha ──
-    document.getElementById('senha').addEventListener('input', function () {
-        const v = this.value;
-        const bars = [document.getElementById('sb1'), document.getElementById('sb2'), document.getElementById('sb3')];
-        const label = document.getElementById('strength-label');
-        bars.forEach(b => b.className = 'strength-bar');
+window.toggleChip = function(el, grupo) {
+    const val = el.getAttribute('data-val');
+    if (el.classList.contains('selected')) { el.classList.remove('selected'); chipSelections[grupo].delete(val); }
+    else { el.classList.add('selected'); chipSelections[grupo].add(val); }
+};
 
-        if (v.length === 0) { label.textContent = ''; return; }
+window.toggleOption = function(el, grupo) {
+    document.querySelectorAll(`#${grupo} .toggle-option`).forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selections[grupo] = el.getAttribute('data-val');
+};
 
-        let score = 0;
-        if (v.length >= 6) score++;
-        if (v.length >= 10) score++;
-        if (/[A-Z]/.test(v) && /[0-9]/.test(v)) score++;
+// ── Força de senha ──
+document.getElementById('senha').addEventListener('input', function() {
+    const v = this.value;
+    const bars = [document.getElementById('sb1'), document.getElementById('sb2'), document.getElementById('sb3')];
+    const label = document.getElementById('strength-label');
+    bars.forEach(b => b.className = 'strength-bar');
+    if (v.length === 0) { label.textContent = ''; return; }
+    let score = 0;
+    if (v.length >= 6) score++;
+    if (v.length >= 10) score++;
+    if (/[A-Z]/.test(v) && /[0-9]/.test(v)) score++;
+    const levels = [{ cls:'weak', txt:'Fraca', n:1 }, { cls:'medium', txt:'Média', n:2 }, { cls:'strong', txt:'Forte', n:3 }];
+    const lvl = levels[Math.max(0, score - 1)];
+    for (let i = 0; i < lvl.n; i++) bars[i].className = `strength-bar ${lvl.cls}`;
+    label.textContent = lvl.txt;
+});
 
-        const levels = [
-            { cls: 'weak',   txt: 'Fraca',  n: 1 },
-            { cls: 'medium', txt: 'Média',  n: 2 },
-            { cls: 'strong', txt: 'Forte',  n: 3 },
-        ];
+// ── Finalizar ──
+window.finalizar = async function() {
+    if (!validarPasso(3)) return;
 
-        const lvl = levels[Math.max(0, score - 1)];
-        for (let i = 0; i < lvl.n; i++) bars[i].className = `strength-bar ${lvl.cls}`;
-        label.textContent = lvl.txt;
-    });
+    const btn = document.getElementById('btn-finalizar');
+    btn.disabled = true;
+    btn.textContent = 'Criando conta...';
 
-    // ── Finalizar ──
-    function finalizar() {
-        if (!validarPasso(3)) return;
+    const email = document.getElementById('email').value.trim();
+    const senha = document.getElementById('senha').value;
+    const nome  = document.getElementById('nome').value.trim();
 
-        // Salvar perfil no localStorage
+    const msgErro = document.getElementById('msg-erro-geral');
+    msgErro.classList.remove('vis');
+
+    try {
+        // Criar usuário no Firebase Auth
+        const credencial = await createUserWithEmailAndPassword(auth, email, senha);
+        const uid = credencial.user.uid;
+
+        // Salvar perfil no Firestore
         const perfil = {
-            email: document.getElementById('email').value.trim(),
-            nome: document.getElementById('nome').value.trim(),
-            faixaEtaria: document.getElementById('faixa-etaria').value,
+            uid,
+            email,
+            nome,
+            role: 'leitor',
+            faixaEtaria: document.getElementById('faixa-etaria').value || null,
             frequencia: selections.frequencia,
             generosFavoritos: [...chipSelections.generos],
             temasEvitar: [...chipSelections.evitar],
@@ -917,171 +386,36 @@
             autoresFavoritos: document.getElementById('autores').value.trim(),
             favoritos: [],
             historico: [],
+            criadoEm: new Date().toISOString(),
         };
-        localStorage.setItem('bibliofinder_perfil', JSON.stringify(perfil));
 
-        // Salvar na lista de contas para login futuro
-        const contas = JSON.parse(localStorage.getItem('bibliofinder_contas') || '[]');
-        if(!contas.find(c => c.email === perfil.email)) {
-            contas.push({ email: perfil.email, senha: document.getElementById('senha').value, nome: perfil.nome, role: 'leitor' });
-            localStorage.setItem('bibliofinder_contas', JSON.stringify(contas));
-        }
+        await setDoc(doc(db, 'usuarios', uid), perfil);
 
-        // Esconder formulário e stepper
+        // Esconder formulário, mostrar sucesso
         document.getElementById(`step-${currentStep}`).classList.remove('active');
         document.getElementById('stepper').style.display = 'none';
         document.querySelector('.progress-bar-wrap').style.display = 'none';
-
-        // Mostrar tela de recomendações em loading
-        const recomScreen = document.getElementById('recom-screen');
-        recomScreen.classList.add('active');
-        document.getElementById('recom-loading').style.display = 'block';
+        document.getElementById('success-screen').classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        gerarRecomendacoes(perfil);
-    }
-
-    // Emojis por gênero para as capas placeholder
-    const GENRE_EMOJI = {
-        fantasy: '🧙', romance: '💕', suspense: '🔍', horror: '👁️',
-        'science fiction': '🚀', history: '⚔️', adventure: '🗺️',
-        biography: '📜', 'self-help': '🌱',
-    };
-
-    // ── Banco de livros fictícios por gênero ──
-    const BANCO = {
-        fantasy: [
-            { titulo: "A Coroa de Cinzas", autor: "Lirien Valdos", descricao: "Em um reino onde a magia é punida com morte, uma jovem descobre que seu sangue pode destruir — ou salvar — tudo o que existe. Uma jornada de escolhas impossíveis e alianças traiçoeiras.", tags: ["épico", "magia proibida", "realeza"] },
-            { titulo: "O Último Druida", autor: "Maren Solveig", descricao: "Quando as florestas começam a apagar a memória dos homens, apenas um druida exilado conhece o caminho de volta. Mas o preço da cura pode ser sua própria existência.", tags: ["floresta", "memória", "sacrifício"] },
-            { titulo: "Filhos da Lua Partida", autor: "Caelum Bright", descricao: "Dois irmãos separados ao nascer crescem em lados opostos de uma guerra mágica. O reencontro deles pode unir o mundo — ou destruí-lo de vez.", tags: ["irmãos", "guerra mágica", "destino"] },
-            { titulo: "A Biblioteca Esquecida", autor: "Isara Venn", descricao: "No subsolo de uma cidade submarina existe uma biblioteca cujos livros reescrevem a realidade. Quando uma leitora encontra um volume sobre si mesma, nada é mais certo.", tags: ["livros", "realidade", "mistério"] },
-        ],
-        romance: [
-            { titulo: "Entre Cartas e Marés", autor: "Sofia Alentejo", descricao: "Dois desconhecidos trocam cartas anônimas por um ano sem saber que são vizinhos de parede. Quando a verdade vem à tona, o amor já construído enfrenta sua maior prova.", tags: ["cartas", "vizinhos", "segredo"] },
-            { titulo: "O Verão que Não Acabou", autor: "Lucas Ferreira", descricao: "Uma fotógrafa e um pescador dividem uma ilha por um mês enquanto fogem de suas vidas. O que começa como fuga se transforma no lar que nenhum dos dois sabia que procurava.", tags: ["ilha", "fotografia", "recomeço"] },
-            { titulo: "Quando o Inverno Passa", autor: "Ana Dolores Ruiz", descricao: "Ela prometeu nunca mais amar depois do acidente. Ele prometeu nunca ficar. Uma pequena cidade nevada, uma tempestade de três dias e uma promessa que nenhum dos dois vai conseguir manter.", tags: ["inverno", "promessas", "segunda chance"] },
-            { titulo: "A Livraria do Fim do Mundo", autor: "Helena Sá", descricao: "A última livraria física da cidade é herdada por uma arquiteta que só lê projetos. O livreiro que a ajuda a catalogar o acervo traz consigo histórias que mudam tudo.", tags: ["livros", "herança", "descoberta"] },
-        ],
-        suspense: [
-            { titulo: "A Testemunha Invisível", autor: "Marco Delvecchio", descricao: "Uma mulher amnésica acorda convicta de ter visto um crime. O problema: a polícia não acredita nela, e o criminoso sabe exatamente quem ela é.", tags: ["amnésia", "crime", "perseguição"] },
-            { titulo: "Três Andares Abaixo", autor: "Petra Kolm", descricao: "Em um prédio antigo de Lisboa, três moradores desaparecem no mesmo dia. A única pista está nos rascunhos deixados por um inquilino misterioso que ninguém viu chegar.", tags: ["Lisboa", "desaparecimento", "rascunhos"] },
-            { titulo: "O Código do Silêncio", autor: "Rafael Nieves", descricao: "Uma jornalista recebe um áudio com confissões de um crime imprescritível. Quanto mais investiga, mais percebe que a história apaga quem a descobre.", tags: ["jornalismo", "conspiração", "áudio"] },
-            { titulo: "Antes do Amanhecer", autor: "Sienna Walsh", descricao: "Todo crime perfeito tem uma falha. Um detetive aposentado recebe uma foto tirada no exato momento de um assassinato — e ele mesmo está na imagem, sem se lembrar de nada.", tags: ["detetive", "fotografia", "memória"] },
-        ],
-        horror: [
-            { titulo: "A Casa que Respira", autor: "Viktor Draal", descricao: "Uma família se muda para uma propriedade isolada que parece se adaptar ao medo de cada um. As paredes não são de concreto — e o que vive dentro delas tem fome.", tags: ["casa assombrada", "família", "psicológico"] },
-            { titulo: "O Colecionador de Sorrisos", autor: "Mira Holloway", descricao: "Numa cidade litorânea, turistas desaparecem deixando apenas um sorriso pintado na areia. Quando a investigadora chega, a cidade sorri para ela também.", tags: ["investigação", "rituais", "litoral"] },
-            { titulo: "Olhos nos Telhados", autor: "Daan Verschoor", descricao: "Uma insônia crônica faz uma mulher ver coisas na escuridão. Mas quando sua terapeuta começa a temer ela também, fica claro que talvez não seja apenas imaginação.", tags: ["insônia", "psicológico", "terror urbano"] },
-        ],
-        'science fiction': [
-            { titulo: "Memória Residual", autor: "Anya Korvitch", descricao: "Em 2187, memórias podem ser vendidas, compradas e implantadas. Uma engenheira descobre uma memória proibida em seu próprio córtex — de um futuro que ainda não aconteceu.", tags: ["memória", "futuro", "tecnologia"] },
-            { titulo: "O Último Sinal", autor: "Cassian Roe", descricao: "A única sonda interestelar da humanidade envia um sinal inesperado após 40 anos de silêncio. O que ela encontrou não veio de uma estrela — veio de dentro do sistema solar.", tags: ["espaço", "primeiro contato", "mistério"] },
-            { titulo: "Colônia Zero", autor: "Lexa Fontaine", descricao: "A primeira colônia em Marte perde contato com a Terra no dia da inauguração. A governante local descobre que o isolamento foi planejado — e que a colônia é um experimento.", tags: ["Marte", "isolamento", "conspiração"] },
-            { titulo: "A Última Linguagem", autor: "Tomás Grei", descricao: "Uma linguista é contratada para decifrar uma língua alienígena. Cada palavra aprendida apaga uma memória sua — e ela está a poucas palavras de compreender tudo.", tags: ["linguagem", "alienígenas", "identidade"] },
-        ],
-        history: [
-            { titulo: "A Espia de Versalhes", autor: "Claudine Moreau", descricao: "Nas vésperas da Revolução Francesa, uma camareira da rainha descobre uma conspiração que pode mudar o curso da história — se ela sobreviver para contá-la.", tags: ["França", "revolução", "espionagem"] },
-            { titulo: "O Cartógrafo de Impérios", autor: "Adebayo Nkosi", descricao: "Em 1500, um cartógrafo árabe e uma navegadora portuguesa disputam o mesmo mapa que pode redefinir as fronteiras do mundo conhecido — e do desconhecido.", tags: ["navegação", "mapas", "séc. XVI"] },
-            { titulo: "Cinzas de Ouro", autor: "Ingrid Hägg", descricao: "Durante a Segunda Guerra, uma curadora de arte em Oslo esconde obras proibidas nos subterrâneos da cidade. Cada quadro guardado é uma vida apostada.", tags: ["guerra", "arte", "resistência"] },
-        ],
-        adventure: [
-            { titulo: "A Rota dos Perdidos", autor: "Dante Alvarez", descricao: "Um guia e uma geóloga partem em busca de uma cidade lendária na Amazônia. O que encontram no caminho não está em nenhum mapa — e não quer ser encontrado.", tags: ["Amazônia", "exploração", "lenda"] },
-            { titulo: "Oceano Sem Nome", autor: "Petra Sul", descricao: "Após um naufrágio, cinco sobreviventes chegam a uma ilha que muda de lugar a cada maré. Para escapar, precisam entender as regras de um lugar que não deveria existir.", tags: ["naufrágio", "ilha", "sobrevivência"] },
-            { titulo: "O Último Alpinista", autor: "Kiran Mehta", descricao: "Uma montanha no Himalaia ainda não conquistada esconde algo no cume. A equipe que tenta a subida descobre que a montanha escolhe quem pode chegar lá.", tags: ["montanha", "conquista", "mistério"] },
-        ],
-        biography: [
-            { titulo: "A Mulher que Inventou o Silêncio", autor: "Celeste Brandt", descricao: "A história real de uma compositora surda do século XX que revolucionou a música eletrônica sem nunca ter ouvido uma nota sequer. Uma vida de criação contra o impossível.", tags: ["música", "superação", "criatividade"] },
-            { titulo: "Código e Coragem", autor: "Yara Silveira", descricao: "Biografia de uma programadora nos anos 60 que, sem reconhecimento, escreveu os algoritmos que levaram o homem à Lua. A história que ninguém quis contar na época.", tags: ["tecnologia", "pioneirismo", "injustiça"] },
-        ],
-        'self-help': [
-            { titulo: "A Arte de Não Terminar", autor: "Bruno Cassela", descricao: "Para quem começa mil projetos e termina nenhum: um guia honesto sobre procrastinação criativa, perfeccionismo e como transformar rascunhos em realizações.", tags: ["produtividade", "criatividade", "hábitos"] },
-            { titulo: "Conversas com Seu Passado", autor: "Renata Vilas", descricao: "Uma abordagem prática para entender como memórias antigas moldam decisões de hoje — e como reescrever a narrativa que você conta para si mesmo.", tags: ["autoconhecimento", "memória", "mudança"] },
-        ],
-    };
-
-    function gerarRecomendacoes(perfil) {
-        const generos = perfil.generosFavoritos;
-        const livros = [];
-        const evitar = perfil.temasEvitar || [];
-
-        // Distribuir livros pelos gêneros selecionados
-        const porGenero = Math.ceil(10 / generos.length);
-        for (const genero of generos) {
-            const banco = BANCO[genero] || [];
-            // Embaralhar e pegar os primeiros
-            const embaralhado = banco.sort(() => Math.random() - 0.5);
-            for (let i = 0; i < Math.min(porGenero, embaralhado.length); i++) {
-                if (livros.length >= 10) break;
-                livros.push({ ...embaralhado[i], genero, match: Math.floor(Math.random() * 15) + 84 });
-            }
+    } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'Criar meu perfil ✓';
+        let mensagem = 'Ocorreu um erro. Tente novamente.';
+        if (err.code === 'auth/email-already-in-use') mensagem = 'Este e-mail já está cadastrado. Faça login.';
+        if (err.code === 'auth/invalid-email') mensagem = 'E-mail inválido.';
+        if (err.code === 'auth/weak-password') mensagem = 'Senha muito fraca. Use ao menos 6 caracteres.';
+        msgErro.textContent = mensagem;
+        msgErro.classList.add('vis');
+        // Voltar para o passo 1 se o erro for de credenciais
+        if (err.code?.startsWith('auth/')) {
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            currentStep = 1;
+            document.getElementById('step-1').classList.add('active');
+            atualizarStepper();
         }
-
-        // Se ainda falta, completar com outros gêneros
-        if (livros.length < 10) {
-            for (const genero of Object.keys(BANCO)) {
-                if (generos.includes(genero)) continue;
-                const banco = (BANCO[genero] || []).sort(() => Math.random() - 0.5);
-                for (const livro of banco) {
-                    if (livros.length >= 10) break;
-                    livros.push({ ...livro, genero, match: Math.floor(Math.random() * 10) + 72 });
-                }
-                if (livros.length >= 10) break;
-            }
-        }
-
-        // Embaralhar resultado final
-        livros.sort(() => Math.random() - 0.5);
-
-        // Simular delay de "processamento"
-        setTimeout(() => {
-            document.getElementById('recom-loading').style.display = 'none';
-            document.getElementById('recom-header').style.display  = 'block';
-            document.getElementById('recom-nome').textContent = perfil.nome;
-            document.getElementById('recom-footer').style.display = 'block';
-            renderizarCards(livros.slice(0, 10), perfil);
-        }, 1800);
     }
-
-    function renderizarCards(livros, perfil) {
-        const grid = document.getElementById('recom-grid');
-        grid.innerHTML = '';
-
-        livros.forEach((livro, i) => {
-            const emoji = GENRE_EMOJI[livro.genero?.toLowerCase()] || '📖';
-            const tagsHtml = (livro.tags || []).map(t => `<span class="recom-tag">${t}</span>`).join('');
-            const matchPct = Math.min(99, Math.max(70, livro.match || 85));
-
-            const card = document.createElement('div');
-            card.className = 'recom-card';
-            card.style.animationDelay = `${i * 0.07}s`;
-            card.innerHTML = `
-                <div class="recom-cover-placeholder">
-                    <span class="recom-cover-emoji">${emoji}</span>
-                    <span class="recom-cover-genre">${livro.genero || ''}</span>
-                </div>
-                <div class="recom-body">
-                    <h3 class="recom-title">${livro.titulo}</h3>
-                    <p class="recom-author">${livro.autor}</p>
-                    <p class="recom-desc">${livro.descricao}</p>
-                    <div class="recom-tags">${tagsHtml}</div>
-                    <div class="recom-match">
-                        <div class="recom-match-bar-wrap">
-                            <div class="recom-match-bar" style="width: 0%" data-pct="${matchPct}"></div>
-                        </div>
-                        <span class="recom-match-pct">${matchPct}%</span>
-                    </div>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
-
-        // Animar barras de match após render
-        setTimeout(() => {
-            document.querySelectorAll('.recom-match-bar').forEach(bar => {
-                bar.style.width = bar.dataset.pct + '%';
-            });
-        }, 300);
-    }
+};
 </script>
 </body>
 </html>
