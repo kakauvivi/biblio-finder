@@ -56,6 +56,11 @@
         .btn-fav{display:block;width:100%;margin-top:6px;padding:6px 14px;background:transparent;border:1.5px solid rgba(212,175,55,0.3);color:#d4af37;font-family:'Quicksand',sans-serif;font-weight:600;font-size:0.75rem;border-radius:var(--radius);cursor:pointer;transition:all 0.2s;}
         .btn-fav:hover,.btn-fav.ativo{background:rgba(212,175,55,0.12);border-color:var(--dourado);}
 
+        .book-card{position:relative;}
+        .card-lock-overlay{position:absolute;inset:0;background:rgba(5,5,5,0.82);border-radius:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2;backdrop-filter:blur(3px);}
+        .card-lock-icon{font-size:2rem;}
+        .card-lock-msg{color:#d4af37;font-size:0.72rem;font-weight:600;text-align:center;padding:0 12px;line-height:1.4;}
+        .tema-aviso{position:absolute;bottom:0;left:0;right:0;background:rgba(160,100,0,0.92);border-radius:0 0 20px 20px;padding:5px 8px;font-size:0.65rem;color:#ffe;text-align:center;z-index:2;line-height:1.3;}
         .empty-state{grid-column:1/-1;text-align:center;padding:4rem 1rem;color:#555;}
         .empty-state-icon{font-size:3rem;margin-bottom:1rem;}
         .empty-state p{font-size:0.95rem;line-height:1.7;}
@@ -183,6 +188,37 @@ let livrosCache = [];
 let generoAtivo = 'todos';
 let buscaAtiva = '';
 
+// ── Verificação de idade e temas ──
+function getIdadeUsuario() {
+    try {
+        const p = JSON.parse(localStorage.getItem('bibliofinder_perfil') || '{}');
+        if (!p.dataNascimento) return null;
+        const hoje = new Date();
+        const nasc = new Date(p.dataNascimento);
+        return hoje.getFullYear() - nasc.getFullYear() - (hoje < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate()) ? 1 : 0);
+    } catch { return null; }
+}
+function livroRestritoParaUsuario(livro) {
+    if (!livro.adulto) return false;
+    const idade = getIdadeUsuario();
+    if (idade === null) return false;
+    return idade < 18;
+}
+function getTemasEvitar() {
+    try {
+        const p = JSON.parse(localStorage.getItem('bibliofinder_perfil') || '{}');
+        return p.temasEvitar || [];
+    } catch { return []; }
+}
+function getAvisoTema(livro) {
+    const evitar = getTemasEvitar();
+    if (!evitar.length || !livro.temas || !livro.temas.length) return null;
+    const conflito = livro.temas.filter(t => evitar.includes(t));
+    if (!conflito.length) return null;
+    const nomes = { violencia:'Violência', guerra:'Guerra', abuso:'Abuso', religiao:'Religião', politica:'Política', morte:'Morte de animais' };
+    return 'Contém: ' + conflito.map(t => nomes[t]||t).join(', ');
+}
+
 // ── Perfil ──
 function getPerfil() { return perfilAtual; }
 
@@ -309,6 +345,8 @@ function renderGrid() {
                     <span class="cover-genre-label">${livro.genero}</span>
                 </div>
                 ${lido ? '<span class="badge-lido" title="Já lido">✓</span>' : ''}
+                ${livroRestritoParaUsuario(livro) ? '<div class=\'card-lock-overlay\'><span class=\'card-lock-icon\'>🔞</span><span class=\'card-lock-msg\'>Conteúdo para maiores de 18 anos</span></div>' : ''}
+                ${getAvisoTema(livro) ? `<div class=\'tema-aviso\'>⚠ Contém tema que você evita</div>` : ''}
             </div>
             <div class="book-info">
                 <h3>${livro.titulo}</h3>

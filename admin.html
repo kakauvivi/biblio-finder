@@ -82,6 +82,17 @@
         .btn-confirm-sim{flex:1;background:#c0392b;border:none;color:white;padding:11px;border-radius:var(--radius);cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.88rem;}
         .btn-confirm-nao{flex:1;background:transparent;border:1.5px solid var(--borda);color:#aaa;padding:11px;border-radius:var(--radius);cursor:pointer;font-family:'Quicksand',sans-serif;font-weight:600;font-size:0.88rem;}
         @media(max-width:480px){.form-btns{flex-direction:column;}.btn-salvar,.btn-cancelar{width:100%;}}
+        .toggle-adulto{display:flex;align-items:center;gap:12px;margin-top:10px;padding:12px 14px;background:rgba(200,80,80,0.06);border:1px solid rgba(200,80,80,0.2);border-radius:12px;cursor:pointer;transition:background 0.2s;}
+        .toggle-adulto.ativo{background:rgba(200,80,80,0.12);border-color:rgba(200,80,80,0.4);}
+        .toggle-adulto-label{font-size:0.85rem;color:#aaa;flex:1;line-height:1.4;}
+        .toggle-adulto.ativo .toggle-adulto-label{color:#e07070;}
+        .switch{width:38px;height:22px;background:#333;border-radius:11px;position:relative;transition:background 0.2s;flex-shrink:0;}
+        .switch::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:white;transition:left 0.2s;}
+        .toggle-adulto.ativo .switch{background:#c0392b;}
+        .toggle-adulto.ativo .switch::after{left:19px;}
+        .temas-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+        .tema-chip{background:transparent;border:1.5px solid var(--borda);color:#888;padding:5px 12px;border-radius:20px;cursor:pointer;font-size:0.75rem;font-family:'Quicksand',sans-serif;font-weight:600;transition:all 0.2s;}
+        .tema-chip.sel{background:rgba(212,175,55,0.12);border-color:var(--dourado);color:var(--dourado);}
     </style>
 </head>
 <body>
@@ -131,6 +142,23 @@
             <button class="btn-add-tag" onclick="adicionarTag()">+</button>
         </div>
         <div class="tags-list" id="tags-list"></div>
+
+        <label>Temas presentes no livro <span class="opc">(para filtro de preferências)</span></label>
+        <div class="temas-chips" id="temas-chips">
+            <div class="tema-chip" data-val="violencia">Violência extrema</div>
+            <div class="tema-chip" data-val="guerra">Guerra</div>
+            <div class="tema-chip" data-val="abuso">Abuso</div>
+            <div class="tema-chip" data-val="religiao">Religião</div>
+            <div class="tema-chip" data-val="politica">Política</div>
+            <div class="tema-chip" data-val="morte">Morte de animais</div>
+        </div>
+
+        <label style="margin-top:16px">Restrição de idade</label>
+        <div class="toggle-adulto" id="toggle-adulto" onclick="toggleAdulto()">
+            <div class="switch"></div>
+            <span class="toggle-adulto-label">🔞 Conteúdo para maiores de 18 anos<br><small style="font-size:0.72rem;opacity:0.7">Ative se o livro contém conteúdo adulto</small></span>
+        </div>
+
         <div class="msg-ok" id="msg-ok">✓ Livro salvo com sucesso!</div>
         <div class="form-btns">
             <button class="btn-cancelar" id="btn-cancelar" style="display:none" onclick="cancelarEdicao()">Cancelar</button>
@@ -184,6 +212,8 @@ const GENRE_EMOJI = { Fantasia:'🧙', Romance:'💕', Suspense:'🔍', Terror:'
 let livrosCache = [];
 let modoEdicao = null;
 let tagsAtuais = [];
+let temasAtuais = new Set();
+let adultoAtivo = false;
 
 // Verificar se é admin
 onAuthStateChanged(auth, async user => {
@@ -220,6 +250,28 @@ function renderTags() {
 }
 window.removerTag = function(i) { tagsAtuais.splice(i,1); renderTags(); };
 
+// ── Toggle adulto ──
+window.toggleAdulto = function() {
+    adultoAtivo = !adultoAtivo;
+    document.getElementById('toggle-adulto').classList.toggle('ativo', adultoAtivo);
+};
+
+// ── Temas chips ──
+document.querySelectorAll('.tema-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        chip.classList.toggle('sel');
+        const val = chip.dataset.val;
+        if (chip.classList.contains('sel')) temasAtuais.add(val);
+        else temasAtuais.delete(val);
+    });
+});
+function resetTemas() {
+    temasAtuais = new Set();
+    document.querySelectorAll('.tema-chip').forEach(c => c.classList.remove('sel'));
+    adultoAtivo = false;
+    document.getElementById('toggle-adulto').classList.remove('ativo');
+}
+
 // ── Preview capa ──
 document.getElementById('capa-url').addEventListener('input', function() {
     const url = this.value.trim();
@@ -246,7 +298,7 @@ window.salvarLivro = async function() {
     btn.disabled = true;
     btn.textContent = 'Salvando...';
 
-    const dados = { titulo, autor, genero, sinopse, capa: capaUrl, link, ano, avaliacao: aval ? Number(aval) : null, tags: tagsAtuais };
+    const dados = { titulo, autor, genero, sinopse, capa: capaUrl, link, ano, avaliacao: aval ? Number(aval) : null, tags: tagsAtuais, temas: [...temasAtuais], adulto: adultoAtivo };
 
     try {
         if (modoEdicao) {
@@ -270,7 +322,7 @@ function limparForm() {
     document.querySelectorAll('input[name=avaliacao]').forEach(r => r.checked=false);
     document.getElementById('capa-preview').style.display='none';
     document.getElementById('capa-ph').style.display='flex';
-    tagsAtuais = []; renderTags();
+    tagsAtuais = []; renderTags(); resetTemas();
     document.getElementById('form-titulo-label').textContent = 'Adicionar livro';
     document.getElementById('btn-cancelar').style.display = 'none';
 }
@@ -298,6 +350,10 @@ window.editarLivro = function(id) {
     if (livro.avaliacao) { const r = document.getElementById(`s${livro.avaliacao}`); if (r) r.checked=true; }
     if (livro.capa) { const img=document.getElementById('capa-preview'); img.src=livro.capa; img.style.display='block'; document.getElementById('capa-ph').style.display='none'; }
     tagsAtuais = [...(livro.tags||[])]; renderTags();
+    resetTemas();
+    (livro.temas||[]).forEach(t => { temasAtuais.add(t); document.querySelector(`.tema-chip[data-val="${t}"]`)?.classList.add('sel'); });
+    adultoAtivo = livro.adulto || false;
+    document.getElementById('toggle-adulto').classList.toggle('ativo', adultoAtivo);
     document.getElementById('form-titulo-label').textContent = 'Editar livro';
     document.getElementById('btn-cancelar').style.display = 'block';
     window.scrollTo({top:0,behavior:'smooth'});
@@ -341,6 +397,8 @@ window.renderLista = function() {
                     <span class="admin-tag">${livro.genero}</span>
                     ${estrelas?`<span class="admin-tag">${estrelas}</span>`:''}
                     ${(livro.tags||[]).map(t=>`<span class="admin-tag">${t}</span>`).join('')}
+                    ${livro.adulto ? '<span class="admin-tag" style="border-color:rgba(200,80,80,0.4);color:#e07070">🔞 +18</span>' : ''}
+                    ${(livro.temas||[]).map(t=>`<span class="admin-tag" style="color:#aaa">${t}</span>`).join('')}
                 </div>
                 <div class="admin-card-btns">
                     <button class="btn-editar" onclick="editarLivro('${livro.id}')">✏ Editar</button>
