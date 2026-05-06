@@ -280,14 +280,7 @@ window.removerCapa = function() {
     document.getElementById('btn-remover-capa').classList.remove('vis');
 };
 
-// ── Preview capa ──
-document.getElementById('capa-url').addEventListener('input', function() {
-    const url = this.value.trim();
-    const img = document.getElementById('capa-preview');
-    const ph  = document.getElementById('capa-ph');
-    if (url) { img.src=url; img.onload=()=>{img.style.display='block';ph.style.display='none';}; img.onerror=()=>{img.style.display='none';ph.style.display='flex';}; }
-    else { img.style.display='none'; ph.style.display='flex'; }
-});
+// ── Preview capa (via upload já é feito no listener do input file acima) ──
 
 // ── Salvar livro ──
 window.salvarLivro = async function() {
@@ -295,18 +288,24 @@ window.salvarLivro = async function() {
     const autor   = document.getElementById('autor').value.trim();
     const genero  = document.getElementById('genero').value;
     const sinopse = document.getElementById('sinopse').value.trim();
-    const capaUrl = document.getElementById('capa-url').value.trim();
+    // Usa a imagem em base64 do upload (corrigido: campo capa-url não existe no HTML)
+    const capa    = window._capaBase64 || '';
     const link    = document.getElementById('link').value.trim();
     const ano     = document.getElementById('ano').value.trim();
     const aval    = document.querySelector('input[name=avaliacao]:checked')?.value || null;
 
     if (!titulo || !autor || !genero) { alert('Preencha pelo menos Título, Autor e Gênero.'); return; }
 
+    if (capa && capa.length > 900000) {
+        alert('A imagem é grande demais para salvar no Firestore (limite ~700kb em base64). Reduza o tamanho da imagem.');
+        return;
+    }
+
     const btn = document.getElementById('btn-salvar');
     btn.disabled = true;
     btn.textContent = 'Salvando...';
 
-    const dados = { titulo, autor, genero, sinopse, capa: capaUrl, link, ano, avaliacao: aval ? Number(aval) : null, tags: tagsAtuais };
+    const dados = { titulo, autor, genero, sinopse, capa, link, ano, avaliacao: aval ? Number(aval) : null, tags: tagsAtuais };
 
     try {
         if (modoEdicao) {
@@ -325,10 +324,17 @@ window.salvarLivro = async function() {
 };
 
 function limparForm() {
-    ['titulo','autor','sinopse','capa-url','link','ano','tag-input'].forEach(id => { document.getElementById(id).value=''; });
+    ['titulo','autor','sinopse','link','ano','tag-input'].forEach(id => { document.getElementById(id).value=''; });
     document.getElementById('genero').selectedIndex = 0;
     document.querySelectorAll('input[name=avaliacao]').forEach(r => r.checked=false);
+    // Resetar capa
+    window._capaBase64 = '';
+    document.getElementById('capa-input-file').value = '';
     document.getElementById('capa-preview').style.display='none';
+    document.getElementById('capa-preview').src = '';
+    document.getElementById('upload-area').classList.remove('tem-imagem');
+    document.getElementById('upload-nome').textContent = '';
+    document.getElementById('btn-remover-capa').classList.remove('vis');
     document.getElementById('capa-ph').style.display='flex';
     tagsAtuais = []; renderTags();
     document.getElementById('form-titulo-label').textContent = 'Adicionar livro';
@@ -352,7 +358,8 @@ window.editarLivro = function(id) {
     document.getElementById('autor').value    = livro.autor||'';
     document.getElementById('genero').value   = livro.genero||'';
     document.getElementById('sinopse').value  = livro.sinopse||'';
-    document.getElementById('capa-url').value = livro.capa||'';
+    // Restaurar capa salva (base64)
+    window._capaBase64 = livro.capa || '';
     document.getElementById('link').value     = livro.link||'';
     document.getElementById('ano').value      = livro.ano||'';
     if (livro.avaliacao) { const r = document.getElementById(`s${livro.avaliacao}`); if (r) r.checked=true; }
@@ -411,5 +418,7 @@ window.renderLista = function() {
     }).join('');
 };
 </script>
+</body>
+</html>
 </body>
 </html>
