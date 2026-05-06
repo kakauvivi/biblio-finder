@@ -22,7 +22,13 @@ const GENRE_MAP = {
 
 function getPerfil() {
     try {
-        return JSON.parse(localStorage.getItem("bibliofinder_perfil")) || null;
+        const p = JSON.parse(localStorage.getItem("bibliofinder_perfil")) || null;
+        if (p) {
+            // Garante que os arrays sempre existem (migração de dados antigos)
+            if (!Array.isArray(p.favoritos)) p.favoritos = [];
+            if (!Array.isArray(p.historico)) p.historico = [];
+        }
+        return p;
     } catch { return null; }
 }
 
@@ -32,25 +38,30 @@ function savePerfil(perfil) {
 
 function isFavorito(bookId) {
     const p = getPerfil();
-    return p ? p.favoritos.some(f => f.id === bookId) : false;
+    // Normaliza para string para evitar falha na comparação number vs string
+    return p ? p.favoritos.some(f => String(f.id) === String(bookId)) : false;
 }
 
 function isJaLido(bookId) {
     const p = getPerfil();
-    return p ? p.historico.some(h => h.id === bookId) : false;
+    return p ? p.historico.some(h => String(h.id) === String(bookId)) : false;
 }
 
 function toggleFavorito(book) {
     const p = getPerfil();
     if (!p) return false;
 
-    const idx = p.favoritos.findIndex(f => f.id === book.id);
+    // Garante que favoritos e historico existem (segurança extra)
+    if (!Array.isArray(p.favoritos)) p.favoritos = [];
+    if (!Array.isArray(p.historico)) p.historico = [];
+
+    const idx = p.favoritos.findIndex(f => String(f.id) === String(book.id));
     if (idx >= 0) {
         p.favoritos.splice(idx, 1);
         savePerfil(p);
         return false; // removido
     } else {
-        p.favoritos.push({ id: book.id, title: book.title, authors: book.authors, cover: book.cover, page: book.page });
+        p.favoritos.push({ id: String(book.id), title: book.title, authors: book.authors, cover: book.cover, page: book.page });
         savePerfil(p);
         return true; // adicionado
     }
@@ -59,8 +70,10 @@ function toggleFavorito(book) {
 function marcarComoLido(book) {
     const p = getPerfil();
     if (!p) return;
-    if (!p.historico.some(h => h.id === book.id)) {
-        p.historico.push({ id: book.id, title: book.title, authors: book.authors, cover: book.cover, page: book.page, dataLeitura: new Date().toISOString() });
+    if (!Array.isArray(p.favoritos)) p.favoritos = [];
+    if (!Array.isArray(p.historico)) p.historico = [];
+    if (!p.historico.some(h => String(h.id) === String(book.id))) {
+        p.historico.push({ id: String(book.id), title: book.title, authors: book.authors, cover: book.cover, page: book.page, dataLeitura: new Date().toISOString() });
         savePerfil(p);
     }
 }
@@ -291,7 +304,7 @@ function renderizarLista(containerId, items, isHistorico) {
 function removerFavorito(bookId) {
     const p = getPerfil();
     if (!p) return;
-    p.favoritos = p.favoritos.filter(f => f.id !== bookId);
+    p.favoritos = p.favoritos.filter(f => String(f.id) !== String(bookId));
     savePerfil(p);
     renderizarPainel();
     atualizarBadge();
@@ -299,14 +312,17 @@ function removerFavorito(bookId) {
     const btn = document.querySelector(`[data-fav-id="${bookId}"]`);
     if (btn) { btn.textContent = "❤ Favoritar"; btn.classList.remove("favoritado"); }
 }
+// Exposto no window para funcionar via onclick inline no HTML gerado
+window.removerFavorito = removerFavorito;
 
 function removerHistorico(bookId) {
     const p = getPerfil();
     if (!p) return;
-    p.historico = p.historico.filter(h => h.id !== bookId);
+    p.historico = p.historico.filter(h => String(h.id) !== String(bookId));
     savePerfil(p);
     renderizarPainel();
 }
+window.removerHistorico = removerHistorico;
 
 function atualizarBadge() {
     const p = getPerfil();
