@@ -335,7 +335,6 @@ function limparForm() {
     document.getElementById('upload-area').classList.remove('tem-imagem');
     document.getElementById('upload-nome').textContent = '';
     document.getElementById('btn-remover-capa').classList.remove('vis');
-    document.getElementById('capa-ph').style.display='flex';
     tagsAtuais = []; renderTags();
     document.getElementById('form-titulo-label').textContent = 'Adicionar livro';
     document.getElementById('btn-cancelar').style.display = 'none';
@@ -363,7 +362,7 @@ window.editarLivro = function(id) {
     document.getElementById('link').value     = livro.link||'';
     document.getElementById('ano').value      = livro.ano||'';
     if (livro.avaliacao) { const r = document.getElementById(`s${livro.avaliacao}`); if (r) r.checked=true; }
-    if (livro.capa) { const img=document.getElementById('capa-preview'); img.src=livro.capa; img.style.display='block'; document.getElementById('capa-ph').style.display='none'; }
+    if (livro.capa) { const img=document.getElementById('capa-preview'); img.src=livro.capa; img.style.display='block'; }
     tagsAtuais = [...(livro.tags||[])]; renderTags();
     document.getElementById('form-titulo-label').textContent = 'Editar livro';
     document.getElementById('btn-cancelar').style.display = 'block';
@@ -418,7 +417,5 @@ window.renderLista = function() {
     }).join('');
 };
 </script>
-</body>
-</html>
 </body>
 </html>
