@@ -157,15 +157,8 @@
             <input type="text" id="nome" placeholder="Como prefere ser chamado(a)?" autocomplete="nickname">
             <span class="field-error" id="nome-error">Por favor, informe seu nome.</span>
 
-            <label class="field-label" for="faixa-etaria">Faixa etária <span class="optional-badge">opcional</span></label>
-            <select id="faixa-etaria">
-                <option value="" disabled selected>Selecione...</option>
-                <option value="under18">Menos de 18 anos</option>
-                <option value="18-24">18 – 24 anos</option>
-                <option value="25-34">25 – 34 anos</option>
-                <option value="35-44">35 – 44 anos</option>
-                <option value="45+">45 anos ou mais</option>
-            </select>
+            <label class="field-label" for="data-nascimento">Data de nascimento <span class="optional-badge">opcional</span></label>
+            <input type="date" id="data-nascimento" max="" style="color-scheme:dark;">
 
             <label class="field-label">Frequência de leitura <span class="optional-badge">opcional</span></label>
             <div class="toggle-group" id="frequencia">
@@ -265,6 +258,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // ── Estado ──
+// Define data máxima do campo de nascimento como hoje
+document.getElementById('data-nascimento').max = new Date().toISOString().split('T')[0];
+
 let currentStep = 1;
 const totalSteps = 3;
 const selections = { frequencia: null, final: null, humor: null };
@@ -378,7 +374,7 @@ window.finalizar = async function() {
             email,
             nome,
             role: 'leitor',
-            faixaEtaria: document.getElementById('faixa-etaria').value || null,
+            dataNascimento: document.getElementById('data-nascimento').value || null,
             frequencia: selections.frequencia,
             generosFavoritos: [...chipSelections.generos],
             temasEvitar: [...chipSelections.evitar],
@@ -402,13 +398,16 @@ window.finalizar = async function() {
     } catch (err) {
         btn.disabled = false;
         btn.textContent = 'Criar meu perfil ✓';
-        let mensagem = 'Ocorreu um erro. Tente novamente.';
+        console.error('Erro ao criar conta:', err.code, err.message);
+        let mensagem = `Ocorreu um erro (${err.code || 'desconhecido'}). Tente novamente.`;
         if (err.code === 'auth/email-already-in-use') mensagem = 'Este e-mail já está cadastrado. Faça login.';
         if (err.code === 'auth/invalid-email') mensagem = 'E-mail inválido.';
         if (err.code === 'auth/weak-password') mensagem = 'Senha muito fraca. Use ao menos 6 caracteres.';
+        if (err.code === 'auth/network-request-failed') mensagem = 'Erro de conexão. Verifique sua internet.';
+        if (err.code?.startsWith('firestore/') || err.code?.startsWith('permission')) mensagem = 'Conta criada, mas erro ao salvar perfil. Tente fazer login.';
         msgErro.textContent = mensagem;
         msgErro.classList.add('vis');
-        // Voltar para o passo 1 se o erro for de credenciais
+        // Voltar para o passo 1 se o erro for de autenticação
         if (err.code?.startsWith('auth/')) {
             document.getElementById(`step-${currentStep}`).classList.remove('active');
             currentStep = 1;
