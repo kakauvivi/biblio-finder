@@ -147,6 +147,34 @@
             <button class="btn-add-tag" onclick="adicionarTag()">+</button>
         </div>
         <div class="tags-list" id="tags-list"></div>
+
+        <label style="margin-top:18px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+            <input type="checkbox" id="adulto" style="width:18px;height:18px;accent-color:#d4af37;cursor:pointer;flex-shrink:0;">
+            <span style="font-size:0.83rem;color:#aaa;">🔞 Conteúdo adulto (+18) — oculto para menores de idade</span>
+        </label>
+
+        <label style="margin-top:14px;">Temas sensíveis <span class="opc">(opcional)</span></label>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;" id="temas-checkboxes">
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#aaa;cursor:pointer;background:#1a1a1a;border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:5px 12px;margin:0;">
+                <input type="checkbox" value="violencia" style="accent-color:#d4af37;"> Violência
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#aaa;cursor:pointer;background:#1a1a1a;border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:5px 12px;margin:0;">
+                <input type="checkbox" value="guerra" style="accent-color:#d4af37;"> Guerra
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#aaa;cursor:pointer;background:#1a1a1a;border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:5px 12px;margin:0;">
+                <input type="checkbox" value="abuso" style="accent-color:#d4af37;"> Abuso
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#aaa;cursor:pointer;background:#1a1a1a;border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:5px 12px;margin:0;">
+                <input type="checkbox" value="religiao" style="accent-color:#d4af37;"> Religião
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#aaa;cursor:pointer;background:#1a1a1a;border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:5px 12px;margin:0;">
+                <input type="checkbox" value="politica" style="accent-color:#d4af37;"> Política
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:#aaa;cursor:pointer;background:#1a1a1a;border:1px solid rgba(212,175,55,0.2);border-radius:20px;padding:5px 12px;margin:0;">
+                <input type="checkbox" value="morte" style="accent-color:#d4af37;"> Morte de animais
+            </label>
+        </div>
+
         <div class="msg-ok" id="msg-ok">✓ Livro salvo com sucesso!</div>
         <div class="form-btns">
             <button class="btn-cancelar" id="btn-cancelar" style="display:none" onclick="cancelarEdicao()">Cancelar</button>
@@ -305,7 +333,9 @@ window.salvarLivro = async function() {
     btn.disabled = true;
     btn.textContent = 'Salvando...';
 
-    const dados = { titulo, autor, genero, sinopse, capa, link, ano, avaliacao: aval ? Number(aval) : null, tags: tagsAtuais };
+    const adulto = document.getElementById('adulto').checked;
+    const temas = Array.from(document.querySelectorAll('#temas-checkboxes input:checked')).map(c => c.value);
+    const dados = { titulo, autor, genero, sinopse, capa, link, ano, avaliacao: aval ? Number(aval) : null, tags: tagsAtuais, adulto, temas };
 
     try {
         if (modoEdicao) {
@@ -336,6 +366,8 @@ function limparForm() {
     document.getElementById('upload-nome').textContent = '';
     document.getElementById('btn-remover-capa').classList.remove('vis');
     tagsAtuais = []; renderTags();
+    document.getElementById('adulto').checked = false;
+    document.querySelectorAll('#temas-checkboxes input').forEach(c => c.checked = false);
     document.getElementById('form-titulo-label').textContent = 'Adicionar livro';
     document.getElementById('btn-cancelar').style.display = 'none';
 }
@@ -364,6 +396,8 @@ window.editarLivro = function(id) {
     if (livro.avaliacao) { const r = document.getElementById(`s${livro.avaliacao}`); if (r) r.checked=true; }
     if (livro.capa) { const img=document.getElementById('capa-preview'); img.src=livro.capa; img.style.display='block'; }
     tagsAtuais = [...(livro.tags||[])]; renderTags();
+    document.getElementById('adulto').checked = livro.adulto || false;
+    document.querySelectorAll('#temas-checkboxes input').forEach(c => { c.checked = (livro.temas||[]).includes(c.value); });
     document.getElementById('form-titulo-label').textContent = 'Editar livro';
     document.getElementById('btn-cancelar').style.display = 'block';
     window.scrollTo({top:0,behavior:'smooth'});
@@ -406,6 +440,7 @@ window.renderLista = function() {
                 <div class="admin-card-meta">
                     <span class="admin-tag">${livro.genero}</span>
                     ${estrelas?`<span class="admin-tag">${estrelas}</span>`:''}
+                    ${livro.adulto?'<span class="admin-tag" style="color:#e07070;border-color:rgba(200,80,80,0.3)">🔞 +18</span>':''}
                     ${(livro.tags||[]).map(t=>`<span class="admin-tag">${t}</span>`).join('')}
                 </div>
                 <div class="admin-card-btns">
