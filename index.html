@@ -191,8 +191,9 @@ let buscaAtiva = '';
 // ── Verificação de idade e temas ──
 function getIdadeUsuario() {
     try {
-        const p = JSON.parse(localStorage.getItem('bibliofinder_perfil') || '{}');
-        if (!p.dataNascimento) return null;
+        // Usa perfilAtual (em memória, sempre atualizado) em vez de localStorage
+        const p = perfilAtual;
+        if (!p || !p.dataNascimento) return null;
         const hoje = new Date();
         const nasc = new Date(p.dataNascimento);
         return hoje.getFullYear() - nasc.getFullYear() - (hoje < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate()) ? 1 : 0);
@@ -201,14 +202,13 @@ function getIdadeUsuario() {
 function livroRestritoParaUsuario(livro) {
     if (!livro.adulto) return false;
     const idade = getIdadeUsuario();
-    if (idade === null) return false;
+    // Se não informou data de nascimento, restringe por segurança
+    if (idade === null) return true;
     return idade < 18;
 }
 function getTemasEvitar() {
-    try {
-        const p = JSON.parse(localStorage.getItem('bibliofinder_perfil') || '{}');
-        return p.temasEvitar || [];
-    } catch { return []; }
+    // Usa perfilAtual (em memória, sempre atualizado) em vez de localStorage
+    return perfilAtual?.temasEvitar || [];
 }
 function getAvisoTema(livro) {
     const evitar = getTemasEvitar();
@@ -226,6 +226,7 @@ async function carregarPerfil(uid) {
     const snap = await getDoc(doc(db, 'usuarios', uid));
     if (snap.exists()) {
         perfilAtual = { uid, ...snap.data() };
+        // FIX: Sempre sincroniza localStorage com dados frescos do Firestore
         localStorage.setItem('bibliofinder_perfil', JSON.stringify(perfilAtual));
     }
     return perfilAtual;
@@ -318,8 +319,15 @@ function renderGrid() {
         const q = buscaAtiva.toLowerCase();
         livros = livros.filter(l => l.titulo?.toLowerCase().includes(q) || l.autor?.toLowerCase().includes(q));
     }
+
+    // FIX RF04: Excluir livros já lidos das recomendações (exceto se a busca for explícita)
+    // Só filtra quando não há busca ativa (para que o usuário possa buscar um livro já lido)
+    const p = getPerfil();
+    if (p && !buscaAtiva && generoAtivo === 'todos') {
+        livros = livros.filter(l => !isLido(l.id));
+    }
+
     if (livros.length === 0) {
-        const p = getPerfil();
         grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📚</div><p>${
             getLivros().length === 0
                 ? `Nenhum livro cadastrado ainda.<br>${p?.role==='admin' ? '<a href="admin.html">Ir para o painel admin →</a>' : 'Aguarde o administrador adicionar livros.'}`
@@ -327,11 +335,13 @@ function renderGrid() {
         }</p></div>`;
         return;
     }
-    const p = getPerfil();
+
     grid.innerHTML = '';
     livros.forEach(livro => {
         const fav = isFav(livro.id);
         const lido = isLido(livro.id);
+        const restrito = livroRestritoParaUsuario(livro); // FIX: agora usa perfilAtual em memória
+        const avisoTema = getAvisoTema(livro);           // FIX: agora usa perfilAtual em memória
         const emoji = GENRE_EMOJI[livro.genero] || '📖';
         const estrelas = '★'.repeat(Math.round(livro.avaliacao||0)) + '☆'.repeat(5-Math.round(livro.avaliacao||0));
         const card = document.createElement('div');
@@ -345,8 +355,8 @@ function renderGrid() {
                     <span class="cover-genre-label">${livro.genero}</span>
                 </div>
                 ${lido ? '<span class="badge-lido" title="Já lido">✓</span>' : ''}
-                ${livroRestritoParaUsuario(livro) ? '<div class=\'card-lock-overlay\'><span class=\'card-lock-icon\'>🔞</span><span class=\'card-lock-msg\'>Conteúdo para maiores de 18 anos</span></div>' : ''}
-                ${getAvisoTema(livro) ? `<div class=\'tema-aviso\'>⚠ Contém tema que você evita</div>` : ''}
+                ${restrito ? '<div class="card-lock-overlay"><span class="card-lock-icon">🔞</span><span class="card-lock-msg">Conteúdo para maiores de 18 anos</span></div>' : ''}
+                ${avisoTema ? `<div class="tema-aviso">⚠ ${avisoTema}</div>` : ''}
             </div>
             <div class="book-info">
                 <h3>${livro.titulo}</h3>
@@ -354,12 +364,16 @@ function renderGrid() {
                 <span class="genero-tag">${livro.genero}</span>
                 ${livro.avaliacao ? `<p class="avaliacao">${estrelas} ${livro.avaliacao}</p>` : ''}
                 <p class="sinopse">${livro.sinopse || ''}</p>
-                <button class="btn-card" data-id="${livro.id}">📖 Ver detalhes</button>
+                ${restrito
+                    ? `<button class="btn-card" disabled style="opacity:0.4;cursor:not-allowed">🔞 Restrito</button>`
+                    : `<button class="btn-card" data-id="${livro.id}">📖 Ver detalhes</button>`
+                }
                 ${p ? `<button class="btn-fav ${fav?'ativo':''}" data-id="${livro.id}">${fav?'❤ Favoritado':'♡ Favoritar'}</button>` : ''}
             </div>`;
         grid.appendChild(card);
     });
-    grid.querySelectorAll('.btn-card').forEach(btn => btn.addEventListener('click', () => abrirModal(btn.dataset.id)));
+    // FIX: só adiciona listener nos botões NÃO desabilitados
+    grid.querySelectorAll('.btn-card:not([disabled])').forEach(btn => btn.addEventListener('click', () => abrirModal(btn.dataset.id)));
     grid.querySelectorAll('.btn-fav').forEach(btn => btn.addEventListener('click', async () => {
         const livro = getLivros().find(l => l.id === btn.dataset.id);
         if (!livro) return;
