@@ -1,0 +1,95 @@
+// =====================================================
+// Biblio Finder — Modelagem do Banco de Dados
+// Ferramenta: dbdiagram.io
+// =====================================================
+
+Table usuarios {
+  id varchar [primary key, not null, note: 'UID gerado pelo Firebase Auth']
+  nome varchar [not null]
+  email varchar [unique, not null]
+  data_nascimento date [note: 'Usado para filtro de conteúdo +18']
+  role varchar [not null, default: 'leitor', note: 'leitor ou admin']
+  frequencia_leitura varchar [note: 'raramente | mensalmente | semanalmente']
+  final_preferido varchar [note: 'feliz | aberto | triste | qualquer']
+  humor_preferido varchar [note: 'leve | serio | sombrio']
+  autores_favoritos text
+  criado_em timestamp [not null, default: `now()`]
+}
+
+Table livros {
+  id varchar [primary key, not null, note: 'ID gerado pelo Firestore']
+  titulo varchar [not null]
+  autor varchar [not null]
+  genero varchar [not null, note: 'Ex: Suspense, Terror, Romance, Fantasia']
+  sinopse text
+  capa text [note: 'Imagem em base64']
+  link varchar [note: 'Link externo para ler ou comprar']
+  ano integer
+  avaliacao smallint [note: '1 a 5 estrelas']
+  adulto boolean [not null, default: false, note: 'true = oculto para menores de 18']
+  criado_em timestamp [not null, default: `now()`]
+}
+
+Table generos_favoritos {
+  id integer [primary key, increment]
+  usuario_id varchar [not null]
+  genero varchar [not null, note: 'Ex: fantasy, romance, horror, suspense']
+}
+
+Table temas_evitar {
+  id integer [primary key, increment]
+  usuario_id varchar [not null]
+  tema varchar [not null, note: 'Ex: violencia, guerra, abuso, religiao, politica, morte']
+}
+
+Table livro_temas {
+  id integer [primary key, increment]
+  livro_id varchar [not null]
+  tema varchar [not null, note: 'Temas sensíveis do livro: violencia, guerra, abuso...']
+}
+
+Table livro_tags {
+  id integer [primary key, increment]
+  livro_id varchar [not null]
+  tag varchar [not null, note: 'Ex: magia, aventura, distopia']
+}
+
+Table favoritos {
+  id integer [primary key, increment]
+  usuario_id varchar [not null]
+  livro_id varchar [not null]
+  salvo_em timestamp [not null, default: `now()`]
+}
+
+Table historico_leitura {
+  id integer [primary key, increment]
+  usuario_id varchar [not null]
+  livro_id varchar [not null]
+  data_leitura timestamp [not null, default: `now()`]
+}
+
+// ── Relacionamentos ──
+
+// Um usuário tem muitos gêneros favoritos
+Ref: generos_favoritos.usuario_id > usuarios.id
+
+// Um usuário tem muitos temas a evitar
+Ref: temas_evitar.usuario_id > usuarios.id
+
+// Um livro tem muitos temas sensíveis
+Ref: livro_temas.livro_id > livros.id
+
+// Um livro tem muitas tags
+Ref: livro_tags.livro_id > livros.id
+
+// Muitos favoritos pertencem a um usuário
+Ref: favoritos.usuario_id > usuarios.id
+
+// Muitos favoritos referenciam um livro
+Ref: favoritos.livro_id > livros.id
+
+// Muitos históricos pertencem a um usuário
+Ref: historico_leitura.usuario_id > usuarios.id
+
+// Muitos históricos referenciam um livro
+Ref: historico_leitura.livro_id > livros.id
