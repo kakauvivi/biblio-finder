@@ -203,10 +203,14 @@ function getIdadeUsuario() {
     } catch { return null; }
 }
 function livroRestritoParaUsuario(livro) {
+    // Se o livro não é adulto, qualquer um pode ver
     if (!livro.adulto) return false;
+    // Se não está logado, restringe
+    if (!perfilAtual) return true;
     const idade = getIdadeUsuario();
-    // Se não informou data de nascimento, restringe por segurança
-    if (idade === null) return true;
+    // Se não informou data de nascimento mas está logado, libera (benefício da dúvida para adultos)
+    if (idade === null) return false;
+    // Restringe apenas menores de 18
     return idade < 18;
 }
 function getTemasEvitar() {
