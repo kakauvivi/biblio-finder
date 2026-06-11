@@ -61,7 +61,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ══ COLE SUAS CONFIGURAÇÕES DO FIREBASE AQUI ══
@@ -79,9 +79,19 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Se já está logado, redireciona
-onAuthStateChanged(auth, user => {
-    if (user) window.location.href = 'index.html';
+// Se já está logado, faz logout primeiro para permitir trocar de conta
+onAuthStateChanged(auth, async user => {
+    if (user) {
+        // Verifica se veio com ?trocar=1 na URL — se sim, faz logout
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('trocar') === '1') {
+            await signOut(auth);
+            localStorage.removeItem('bibliofinder_perfil');
+            window.location.href = 'login.html';
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
 });
 
 window.entrar = async function() {
